@@ -14,6 +14,13 @@ class User(db.Model):
     date_created = db.column(db.DateTime, default = datetime.utcnow)
 
 class Student(db.Model):
+    __tablename__ = 'students'
+    student_id = db.column(db.Integer, primary_key = True)
+    user_id = db.column(db.Integer, db.foreign_key('users.user_id'), nullable = False)
+    class_id = db.column(db.Integer, db.foreign_key('classes.class_id'), nullable = False)
+    full_name = db.column(db.String(100), nullable = False)
+    dob = db.column(db.Date, nullable = False)
+    date_enrolled = db.column(db.DateTime, default = datetime.utcnow)
 
 class Teacher(db.Model):
 
@@ -32,4 +39,3 @@ class SeatingPlan(db.Model):
 class Notification(db.Model):
 
 class Message(db.Model):
-
