@@ -3,7 +3,8 @@ from datetime import datetime
 
 db = SQLAlchemy
 
-# Creating the database for authenticating for all roles, so basically the user model
+# Creating the database for authenticating for all roles 
+# User database model
 class User(db.Model):
     __tablename__ = 'users'
     user_id = db.column(db.Integer, primary_key = True)
@@ -13,6 +14,7 @@ class User(db.Model):
     email = db.column(db.String(100), nullable = False)
     date_created = db.column(db.DateTime, default = datetime.utcnow)
 
+#Student database model, links to users table and classes table
 class Student(db.Model):
     __tablename__ = 'students'
     student_id = db.column(db.Integer, primary_key = True)
