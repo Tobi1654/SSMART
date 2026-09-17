@@ -1,5 +1,40 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block title %}Login{% endblock %}
 
-{% block title %}Login{% endblock %}
+<!--Login component contents-->
+{% block content %}
+<form method="POST">
+    <h3 align="center">Log In</h3>
+    <div class="form-group">
+        <label for="username" placeholder="Micheal.Drew1">Username</label>
+        <input type="text" 
+                class="form-control" 
+                id="username" 
+                name="username" 
+                placeholder="e.g. Micheal.Drew1"
+        >
 
-{% block content %}<h1>This is the Log in Page</h1>{% endblock %}
+        <label for="password_hash" class="form-label">Password</label>
+        <input type="password" 
+                id="password_hash" 
+                class="form-control" 
+                placeholder="Enter your password"
+        >
+        <label for="role" class="form-label">Role:</label>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" id="role" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+        </div>
+
+    </div>
+    <br>
+    <button class="btn btn-primary" type="submit">LOG IN</button>
+</form>
+{% endblock %}
+
+
+
+
