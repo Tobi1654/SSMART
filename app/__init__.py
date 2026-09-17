@@ -22,6 +22,14 @@ def create_app():
     with app.app_context():
         db.create_all()
 
+# defining the route in init.py
+    from .views import views
+    from .auth import auth
+
+# defined the url prefixes
+    app.register_blueprint(views, url_prefix = '/')
+    app.register_blueprint(auth, url_prefix = '/')
+
 
     @app.route('/')
     def home():
