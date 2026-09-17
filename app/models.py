@@ -1,5 +1,7 @@
 from app.extensions import db
 from datetime import datetime
+from flask_login import UserMixin
+import bcrypt
 
 # Creating the database for authenticating for all roles 
 # User database model
@@ -11,6 +13,22 @@ class User(db.Model):
     role = db.Column(db.String(20), nullable = False)
     email = db.Column(db.String(100), nullable = False)
     date_created = db.Column(db.DateTime, default = datetime.utcnow)
+
+# Started the authentication process for the user login, by making sure the password is secure
+
+# set_password function takes the written password and hashes it with bcrypt, then stores the hash
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(
+            password.encode('utf-8'),
+            bcrypt.gensalt('utf-8')
+        ).decode('utf-8')
+
+# check_password function, then takes the written password and compares it to the stored hashed password and checks if it matches
+    def check_password(self, password):
+        return bcrypt.checkpw(
+            password.encode('utf-8'),
+            self.password_hash.encode('utf-8')
+        )
 
 #Student database model, links to users table and classes table
 class Student(db.Model):
