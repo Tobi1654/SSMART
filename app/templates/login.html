@@ -20,15 +20,15 @@
                 name="password"
                 placeholder="Enter your password"
         >
-        <label for="selected_role" class="form-label">Role:</label>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" name="selected_role" id="selected_role" type="button" data-bs-toggle="dropdown" aria-expanded="false">Student</button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Student</a></li>
-                    <li><a class="dropdown-item" href="#">Teacher</a></li>
-                    <li><a class="dropdown-item" href="#">Admin</a></li>
-                </ul>
-            </div>
+        <div class="mb-3">
+            <label for="role" class="form-label">Role:</label>
+            <select class="form-select" id="role" name="role" required>
+                <option value="" selected disabled> Select a role </option>
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
 
     </div>
     <br>

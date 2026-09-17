@@ -20,29 +20,34 @@ def login():
     #else:
     #   flash('Successfully logged in', category = 'success')
 
+        if not username or not password or not selected_role:
+                flash('All fields are required', 'error')
+                return redirect(url_for('auth.login'))
+        
 
-    user = User.query.filter_by(username = username).first()
 
-    if not user:
-        flash('User not found', 'error')
-        return redirect(url_for('auth.login'))
+        user = User.query.filter_by(username = username).first()
 
-    if not user.check_password(password):
-        flash('Incorrect Password', 'error')
-        return redirect(url_for('auth.login'))
+        if not user:
+            flash('User not found', 'error')
+            return redirect(url_for('auth.login'))
 
-    if user.role != selected_role:
-        flash('Account cannot log in with selected role', 'error')
-        return redirect(url_for('auth.login'))
+        if not user.check_password(password):
+            flash('Incorrect Password', 'error')
+            return redirect(url_for('auth.login'))
 
-    login_user(user)
+        if user.role != selected_role:
+            flash('Account cannot log in with selected role', 'error')
+            return redirect(url_for('auth.login'))
 
-    if user.role == 'student':
-        return redirect(url_for('auth.student_dashboard'))
-    elif user.role == 'teacher':
-        return redirect(url_for('auth.teacher_dashboard'))
-    elif user.role == 'admin':
-        return redirect(url_for('auth.admin_dashboard'))
+        login_user(user)
+
+        if user.role == 'student':
+            return redirect(url_for('auth.student_dashboard'))
+        elif user.role == 'teacher':
+            return redirect(url_for('auth.teacher_dashboard'))
+        elif user.role == 'admin':
+            return redirect(url_for('auth.admin_dashboard'))
 
     return render_template("login.html")
 
