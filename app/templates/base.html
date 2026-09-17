@@ -33,19 +33,19 @@
 
     {% with messages = get_flashed_messages(with_categories = true) %}
     {% if messages %}
-    {% for category, messages in messages %}
+    {% for category, message in messages %}
 
-    {%if category == 'error'%}
+    {% if category == 'error' %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{messages}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
         <span aria-hidden="true">&times;</span>
     </div>
 
-    {%else%}
+    {% else %}
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{messages}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
         <span aria-hidden="true">&times;</span>
     </div>
 
