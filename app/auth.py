@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template, request, flash #, url_for, redirect
+from flask import Blueprint, render_template, request, flash, url_for, redirect
+from app.models import User
+from flask_login import login_user, logout_user, login_required
+from app.extensions import db
 
 # blue print setting up for auth
 auth = Blueprint('auth', __name__)
@@ -9,41 +12,59 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        #selected_role = request.form.get('role')
-
-    if len(username) < 4:
-        flash('Username is too short', category='error')
-    
-    else:
-        flash('Successfully logged in', category = 'success')
-
-
-    #user = User.query.filter_by(username=username).first()
+        selected_role = request.form.get('role')
 
     #if len(username) < 4:
-        #flash('Username is too short', category='error')
-
+    #   flash('Username is too short', category='error')
+    
     #else:
-        #flash('Successfully logged in', category = 'success')
+    #   flash('Successfully logged in', category = 'success')
 
-    #if not user:
-        #flash('User not found', 'error')
-        #return redirect(url_for('auth.login'))
 
-    #if not user.check_password(password):
-        #flash('Incorrect Password', 'error')
-        #return redirect(url_for('auth.login'))
+    user = User.query.filter_by(username = username).first()
 
-    #if user.role != selected_role:
-        #flash('Account cannot log in with selected role', 'error')
-        #return redirect(url_for('auth.login'))
+    if not user:
+        flash('User not found', 'error')
+        return redirect(url_for('auth.login'))
 
-    #else:
-        #flash('Successfully logged in', 'success')
+    if not user.check_password(password):
+        flash('Incorrect Password', 'error')
+        return redirect(url_for('auth.login'))
+
+    if user.role != selected_role:
+        flash('Account cannot log in with selected role', 'error')
+        return redirect(url_for('auth.login'))
+
+    login_user(user)
+
+    if user.role == 'student':
+        return redirect(url_for('auth.student_dashboard'))
+    elif user.role == 'teacher':
+        return redirect(url_for('auth.teacher_dashboard'))
+    elif user.role == 'admin':
+        return redirect(url_for('auth.admin_dashboard'))
 
     return render_template("login.html")
 
+@auth.route('/student_dashboard')
+@login_required
+def student_dashboard():
+    return 'Student Dashboard'
+
+@auth.route('/teacher_dashboard')
+@login_required
+def teacher_dashboard():
+    return 'Teacher Dashboard'
+
+@auth.route('/admin_dashboard')
+@login_required
+def admin_student():
+    return 'Admin Dashboard'
+
 #routing to the sign up page
 @auth.route('/logout')
+@login_required
 def logout():
-    return "Logging out..."
+    logout_user
+    flash('You have been logged out', category='success')
+    return redirect(url_for('auth.login'))

@@ -3,7 +3,7 @@ from app.extensions import db, login_manager
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'dev-key-change-this-later'
+    app.config['SECRET_KEY'] = 'I LoVe doNuTs'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ssmart.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
