@@ -39,7 +39,7 @@ class Class(db.Model):
     class_id = db.column(db.Integer, primary_key = True)
     teacher_id = db.column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable = False)
     class_name = db.column(db.String(10), unique = True, nullable = False)
-    year_group = db.column(sb.Integer, nullable = False)
+    year_group = db.column(db.Integer, nullable = False)
 
 #attendance database model, links to both student and class table
 class Attendance(db.Model):
@@ -54,9 +54,9 @@ class Attendance(db.Model):
 class Subject(db.Model):
     __tablename__ = 'subjects'
     subject_id = db.column(db.Integer, primary_key = True)
-    subject_name = db.column(db.String(100), unique = True nullable = False)
+    subject_name = db.column(db.String(100), unique = True, nullable = False)
 
-#grades databsse model, links to both student and subject id
+#grades database model, links to both student and subject id
 class Grade(db.Model):
     __tablename__  = 'grades'
     grade_id = db.column(db.Integer, primary_key = True)
