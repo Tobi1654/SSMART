@@ -21,23 +21,22 @@ def login():
     #   flash('Successfully logged in', category = 'success')
 
         if not username or not password or not selected_role:
-                flash('All fields are required', 'error')
+                flash('All fields are required', category='error')
                 return redirect(url_for('auth.login'))
         
-
 
         user = User.query.filter_by(username = username).first()
 
         if not user:
-            flash('User not found', 'error')
+            flash('User not found', category='error')
             return redirect(url_for('auth.login'))
 
         if not user.check_password(password):
-            flash('Incorrect Password', 'error')
+            flash('Incorrect Password', category='error')
             return redirect(url_for('auth.login'))
 
         if user.role != selected_role:
-            flash('Account cannot log in with selected role', 'error')
+            flash('Account cannot log in with selected role', category='error')
             return redirect(url_for('auth.login'))
 
         login_user(user)
