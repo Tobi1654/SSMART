@@ -5,7 +5,11 @@ auth = Blueprint('auth', __name__)
 
 ## routing to the login page
 @auth.route('/login', methods = ['GET', 'POST'])
-def login(): 
+def login():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        selected_role = request.form.get('role')
     return render_template("login.html")
 
 #routing to the sign up page
