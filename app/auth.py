@@ -5,7 +5,7 @@ auth = Blueprint('auth', __name__)
 
 ## routing to the login page
 @auth.route('/login', methods = ['GET', 'POST'])
-def login():
+def login(): 
     return render_template("login.html")
 
 #routing to the sign up page
