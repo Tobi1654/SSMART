@@ -1,7 +1,5 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from app.extensions import db
 
 def create_app():
     app = Flask(__name__)
@@ -9,7 +7,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ssmart.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    db.int_app(app)
+    db.init_app(app)
 
     from app import models
 
