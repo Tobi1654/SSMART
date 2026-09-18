@@ -31,10 +31,10 @@
         </div> 
     </nav>
 
+    <!--Flashed messages rule for error and success alert-->
     {% with messages = get_flashed_messages(with_categories = true) %}
     {% if messages %}
     {% for category, message in messages %}
-
     {% if category == 'error' %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{message}}
