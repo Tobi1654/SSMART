@@ -1,6 +1,7 @@
 from flask import Flask
 from app.extensions import db, login_manager
 
+#sqlite config
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'I LoVe doNuTs'
