@@ -38,5 +38,5 @@ with app.app_context():
                 Test users created:
                 1. admin1 / admin123 (admin)
                 2. teacher1 / teacher123 (teacher)
-                3. student1 / student123 (student)
+                3. Micheal.Drew / student123 (student)
             """)

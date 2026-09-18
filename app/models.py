@@ -6,7 +6,7 @@ import bcrypt
 # Creating the database for authenticating for all roles 
 
 # User database model
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
     user_id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(100), unique = True, nullable = False)
@@ -30,6 +30,9 @@ class User(db.Model):
             password.encode('utf-8'),
             self.password_hash.encode('utf-8')
         )
+
+    def get_id(self):
+        return str(self.user_id)
 
 #Student database model, links to users table and classes table
 class Student(db.Model):

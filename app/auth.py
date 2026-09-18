@@ -62,13 +62,13 @@ def teacher_dashboard():
 
 @auth.route('/admin_dashboard')
 @login_required
-def admin_student():
+def admin_dashboard():
     return 'Admin Dashboard'
 
 #routing to the log in page
 @auth.route('/logout')
 @login_required
 def logout():
-    logout_user
+    logout_user()
     flash('You have been logged out', category='success')
     return redirect(url_for('auth.login'))
