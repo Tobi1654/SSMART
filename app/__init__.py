@@ -26,7 +26,7 @@ def create_app():
     app.register_blueprint(auth)
 
 # defining the route in init.py
-    #from .views import views
+    #from .views import views 
     #from .auth import auth
 
 # defined the url prefixes

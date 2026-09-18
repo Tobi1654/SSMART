@@ -65,7 +65,7 @@ def teacher_dashboard():
 def admin_student():
     return 'Admin Dashboard'
 
-#routing to the sign up page
+#routing to the log in page
 @auth.route('/logout')
 @login_required
 def logout():
