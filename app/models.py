@@ -21,7 +21,7 @@ class User(db.Model):
     def set_password(self, password):
         self.password_hash = bcrypt.hashpw(
             password.encode('utf-8'),
-            bcrypt.gensalt('utf-8')
+            bcrypt.gensalt()
         ).decode('utf-8')
 
 # check_password function, then takes the written password and compares it to the stored hashed password and checks if it matches
