@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %}
+
+{% block content %}
+
+<p class="dashboard_notice">Admin Dashboard</p>
+
+<!--Welcome header message-->
+<div class="header">
+    <h2><strong>WELCOME, {{current_user.username}}</strong></h2>
+    <small class="text-muted">You are logged in as an Admin</small>
+    <small class="text-muted">{{today_date}}</small>
+</div>
+
+
+{% endblock %}

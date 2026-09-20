@@ -22,6 +22,7 @@ def add_teacher():
     if request.method == 'POST':
         full_name = request.form.get('full_name')
         email = request.form.get('email')
+        role = request.form.get('role')
         department = request.form.get('department')
         subject = request.form.get('subject')
 
