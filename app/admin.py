@@ -1,7 +1,8 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import User, Teacher, Class
+from app.models import User, Teacher, Class, Student
 from app.utils import admin_required
+from datetime import datetime
 import secrets
 import string
 
@@ -23,6 +24,8 @@ def add_user():
         full_name = request.form.get('full_name')
         email = request.form.get('email')
         role = request.form.get('role')
+        class_id = request.form.get('class_id')
+        dob = request.form.get('dob')
         department = request.form.get('department')
         subject = request.form.get('subject')
 
@@ -37,6 +40,15 @@ def add_user():
         if User.query.filter_by(email=email).first():
             flash('An account with this email already exist', category='error')
             return redirect(url_for('admin.add_user'))
+
+        if role == 'student':
+            if not dob or not class_id:
+                flash('Date of birth and class are required for students', category='error')
+                return redirect(url_for('admin.add_user'))
+
+            if not Class.query.get(class_id):
+                flash('Selected class does not exist', category='error')
+                return redirect(url_for('admin.add_user'))
 
         base_username = email.split('@')[0]
         username = base_username
@@ -67,12 +79,25 @@ def add_user():
             )
             db.session.add(new_teacher)
 
+        elif role == 'student':
+            from datetime import datetime
+            dob_date = datetime.strptime(dob, '%D-%m-%y').date()
+            new_student = Student(
+                user_id = new_user.user_id,
+                full_name = full_name,
+                dob = dob_date,
+                class_id = int(class_id),
+                date_enrolled = datetime.today().date()
+            )
+
         db.session.commit()
 
         flash(f'{role} created. Username: {username} | Temp password: {temp_password}', category='success')
         return redirect(url_for('admin.add_user'))
 
     return render_template('add_user.html') 
+
+
 
 @admin.route('/admin/add_class', methods=['POST', 'GET'])
 @admin_required

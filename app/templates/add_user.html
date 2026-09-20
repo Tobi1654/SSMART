@@ -4,7 +4,7 @@
 
 
 <div class="container">
-<h3 align="center">Add New Teacher</h3>
+<h3 align="center">Add New User</h3>
 
 <form action="{{url_for('admin.add_user') }}" method="POST">
         <div class="form-group">
@@ -37,7 +37,26 @@
                                 <option value="admin">Admin</option>
                         </select>
                 </div>
+<!--Student inly fields-->
+                <div id="student_fields">
+                        <label for="dob", class="form-label">Date of Birth</label>
+                        <input type="date"
+                                class="form-control"
+                                id="dob"
+                                name="dob"
+                                required
+                        >
 
+                        <label for="class_id" class="form-label">Class</label>
+                        <select class="form-select" id="class_id" name="class_id">
+                                <option value="">--- Select a Class---</option>
+                                {% for cls in classes %} <!--use cls for class because of class is a reversed keyword in jinja-->
+                                <option value="{{class.class_id}}">{{ cls.class_name }} (Year {{cls.year_group}})</option>
+                                {% endfor %}
+                        </select>
+                </div>
+
+                <!--Fields only for teacher-->
                 <div id="teacher_fields">
                         <label for="department" class="form-label">Department</label>
                         <input type="text"
@@ -65,11 +84,20 @@
         function toggleTeacherFields(){
                 const role = document.getElementById('role').value;
                 const teacherFields = document.getElementById('teacher-fields');
+                const studentFields = document.getElementById('student-fields');
+
                 if (role == 'teacher'){
                         teacherFields.style.display = 'block';
                 }
                 else {
                         teacherFields.style.display = 'none';
+                }
+
+                if (role == 'student'){
+                        studentFields.style.display = 'block';
+                }
+                else{
+                        studentFields.style.display = 'none';
                 }
         }
 </script>
