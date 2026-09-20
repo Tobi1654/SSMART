@@ -114,7 +114,7 @@ def add_class():
         db.session.commit()
 
         flash(f"Class: {class_name} created successfully", category='success')
-        return redirect(url_for(admin.add_class))
+        return redirect(url_for('admin.add_class'))
 
     teachers = Teacher.query.all()
     return render_template('add_class.html', teachers = teachers)

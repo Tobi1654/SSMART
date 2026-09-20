@@ -1,50 +1,52 @@
-{% extends "base.html" %} {% block title %}Add Class{% endblock %}
+{% extends "base.html" %}
+{% block title %}Add Class{% endblock %}
 
 {% block content %}
 
-
 <div class="container">
-<h3 align="center">Add New Teacher</h3>
+    <h3 align="center">Create New Class</h3>
 
-<form action="{{url_for('admin.add_class') }}" method="POST">
+    <form action="{{ url_for('admin.add_class') }}" method="POST">
         <div class="form-group">
-                <label for="class_name" class="form-label">Enter class name</label>
-                <input type="text"
-                        class="form-control"
-                        id="class_name"
-                        name="class_name"
-                        placeholder="12 Computing"
-                        required
-                        minlength="2"
-                        pattern="[A-Za-z\s\-]+"
-                >
 
-                <div class="mb-3">
-                        <label for="year_group" class="form-label">Role:</label>
-                        <select class="form-select" id="year_group" name="year_group">
-                                <option value="" selected disabled> Select a year group </option>
-                                <option value="yr7">Year 7</option>
-                                <option value="yr8">Year 8</option>
-                                <option value="yr9">Year 9</option>
-                                <option value="yr10">Year 10</option>
-                                <option value="yr11">Year 11</option>
-                                <option value="yr12">Year 12</option>
-                                <option value="yr13">Year 13</option>
-                        </select>
-                </div>
+            <label for="class_name" class="form-label">Enter class name</label>
+            <input type="text"
+                class="form-control"
+                id="class_name"
+                name="class_name"
+                placeholder="12 Computing"
+                required
+                minlength="2">
 
-                <div id="teacher_fields">
-                    <label for="teacher_id" class="form-label">Teacher(optional)</label>
-                    <select class="form-select" id="year_group" name="year_group">
-                                <option value=""> No teacher assigned </option>
-                                {% for teachers in teachers %}
-                                <option value="{{teacher.teacher_id}}">{{ teacher.full_name }}</option>
-                                {% endfor %}
-                    </select>
-                </div>
+            <div class="mb-3">
+                <label for="year_group" class="form-label">Year Group:</label>
+                <select class="form-select" id="year_group" name="year_group" required>
+                    <option value="" selected disabled>-- Select a year group --</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
+            </div>
 
-                <button class="btn btn-primary" type="submit">Create New User</button>
+            <div id="teacher_fields">
+                <label for="teacher_id" class="form-label">Teacher (optional)</label>
+                <select class="form-select" id="teacher_id" name="teacher_id">
+                    <option value="">-- No teacher assigned --</option>
+                    {% for teacher in teachers %}
+                        <option value="{{ teacher.teacher_id }}">{{ teacher.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <br>
+            <button class="btn btn-primary" type="submit">Create Class</button>
+
         </div>
-</form>
+    </form>
 </div>
+
 {% endblock %}

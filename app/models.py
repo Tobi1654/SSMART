@@ -57,7 +57,7 @@ class Teacher(db.Model):
 class Class(db.Model):
     __tablename__ = 'classes'
     class_id = db.Column(db.Integer, primary_key = True)
-    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable = False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable = True)
     class_name = db.Column(db.String(50), unique = True, nullable = False)
     year_group = db.Column(db.Integer, nullable = False)
 

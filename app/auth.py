@@ -46,7 +46,7 @@ def login():
         elif user.role == 'teacher':
             return redirect(url_for('auth.teacher_dashboard'))
         elif user.role == 'admin':
-            return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('admin.dashboard'))
 
     return render_template("login.html")
 
