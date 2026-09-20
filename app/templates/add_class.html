@@ -1,0 +1,78 @@
+{% extends "base.html" %} {% block title %}Add Class{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+<h3 align="center">Add New Teacher</h3>
+
+<form action="{{url_for('admin.add_class') }}" method="POST">
+        <div class="form-group">
+                <label for="class_name" class="form-label">Full Name</label>
+                <input type="text"
+                        class="form-control"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Mr. Mike Bennet"
+                        required
+                        minlength="3"
+                        pattern="[A-Za-z\s\-]+"
+                >
+
+                <label for="email" class="form-label">Email</label>
+                <input type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="teacher1@school.org.uk"
+                        required
+                >
+
+                <div class="mb-3">
+                        <label for="role" class="form-label">Role:</label>
+                        <select class="form-select" id="role" name="role">
+                                <option value="" selected disabled> Select a role </option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
+                        </select>
+                </div>
+
+                <div id="teacher_fields">
+                        <label for="department" class="form-label">Department</label>
+                        <input type="text"
+                                class="form-control"
+                                id="department"
+                                name="department"
+                                placeholder="e.g. Humanities"
+                        >
+
+                        <label for="subject" class="form-label">Subjects</label>
+                        <textarea class="form-control"
+                                id="subject"
+                                name="subject"
+                                placeholder="e.g Maths, Physics, Biology"
+                                rows="3"
+                        ></textarea>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Create New User</button>
+        </div>
+</form>
+</div>
+
+<script>
+        function toggleTeacherFields(){
+                const role = document.getElementById('role').value;
+                const teacherFields = document.getElementById('teacher-fields');
+                if (role == 'teacher'){
+                        teacherFields.style.display = 'block';
+                }
+                else {
+                        teacherFields.style.display = 'none';
+                }
+        }
+</script>
+
+
+{% endblock %}

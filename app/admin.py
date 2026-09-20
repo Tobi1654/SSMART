@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import User, Teacher
+from app.models import User, Teacher, Class
 from app.utils import admin_required
 import secrets
 import string
@@ -73,3 +73,48 @@ def add_user():
         return redirect(url_for('admin.add_user'))
 
     return render_template('add_user.html') 
+
+@admin.route('/admin/add_class', methods=['POST', 'GET'])
+@admin_required
+def add_class():
+    if request.method == 'POST':
+        class_name = request.form.get('class_name')
+        year_group = request.form.get('year_group')
+        teacher_id = request.form.get('teacher_id')
+
+        if not class_name or not year_group:
+            flash('Class name and year group are required', category='error')
+            return redirect(url_for('admin.add_class'))
+
+        if Class.query.filter_by(class_name=class_name).first():
+            flash('This class name already exists', category='error')
+            return redirect(url_for('admin.add_class'))
+
+
+        try:
+            year_group_int = int(year_group)
+            if year_group_int < 7 or year_group_int > 13:
+                flash('Year group must be between 7and 13', category='error')
+                return redirect(url_for('admin.add_class'))
+        except ValueError:
+            flash('Year group must be a number', category='error')
+            return redirect(url_for('admin.add_class'))
+
+        if teacher_id:
+            teacher_id_int = int(teacher_id)
+        else:
+            teacher_id = None
+
+        new_class = Class(
+            class_name = class_name,
+            year_group = year_group,
+            teacher_id = teacher_id
+        )
+        db.session.add(new_class)
+        db.session.commit()
+
+        flash(f"Class: {class_name} created successfully", category='success')
+        return redirect(url_for(admin.add_class))
+
+    teachers = Teacher.query.all()
+    return render_template('add_class.html', teachers = teachers)
