@@ -18,7 +18,7 @@ def dashboard():
 
 @admin.route('/admin/add_user', methods=['GET', 'POST'])
 @admin_required
-def add_teacher():
+def add_user():
     if request.method == 'POST':
         full_name = request.form.get('full_name')
         email = request.form.get('email')
@@ -36,7 +36,7 @@ def add_teacher():
 
         if User.query.filter_by(email=email).first():
             flash('An account with this email already exist', category='error')
-            return redirect(url_for('admin.add_use'))
+            return redirect(url_for('admin.add_user'))
 
         base_username = email.split('@')[0]
         username = base_username
@@ -69,7 +69,7 @@ def add_teacher():
 
         db.session.commit()
 
-        flash(f'Teacher created. Username: {username} | Temp password: {temp_password}', category='success')
+        flash(f'{role} created. Username: {username} | Temp password: {temp_password}', category='success')
         return redirect(url_for('admin.add_user'))
 
     return render_template('add_user.html')
