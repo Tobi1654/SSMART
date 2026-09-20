@@ -145,3 +145,49 @@ def add_class():
 
     teachers = Teacher.query.all()
     return render_template('add_class.html', teachers = teachers)
+
+@admin.route('/admin/students')
+@admin_required
+def students():
+    search_query = request.args.get('search', '').strip()
+    class_filter = request.args.get('class_filter', '').strip()
+    year_filter = request.args.get('year_filter', '').strip()
+
+    query = Student.query
+
+    if search_query:
+        query = query.filter(Student.full_name.ilike(f'%{search_query}%'))
+
+    if class_filter:
+        query = query.filter(Student.class_id == int(class_filter))
+
+    if year_filter:
+        query = query.join(Class, Student.class_id == Class.class_id).filter(Class.year_group == int(year_filter))
+
+    students_list = query.all()
+
+    student_data = []
+    for s in student_data:
+        user = User.query.get(s.user_id)
+        student_class = Class.query.get(s.class_id)
+        student_data.append({
+            'student_id': s.student_id,
+            'full_name': s.full_name,
+            'username': user.username if user else '-',
+            'email': user.email if user else '-',
+            'class_name': student_class.class_name if student_class else '-',
+            'year_group': student_class.year_group if student_class else '-',
+            'dob': s.dob,
+            'date_enrolled': s.date_enrolled
+        })
+
+    classes = Class.query.all()
+
+    return render_template(
+        'students.html',
+        students = student_data,
+        classes = classes,
+        search_query = search_query,
+        class_filter = class_filter,
+        year_filter  =year_filter
+    )
