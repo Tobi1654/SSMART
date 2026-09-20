@@ -72,4 +72,4 @@ def add_user():
         flash(f'{role} created. Username: {username} | Temp password: {temp_password}', category='success')
         return redirect(url_for('admin.add_user'))
 
-    return render_template('add_user.html')
+    return render_template('add_user.html') 
