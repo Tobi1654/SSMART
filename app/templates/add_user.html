@@ -30,7 +30,7 @@
 
                 <div class="mb-3">
                         <label for="role" class="form-label">Role:</label>
-                        <select class="form-select" id="role" name="role">
+                        <select class="form-select" id="role" name="role" required onchange="toggleFields()" required>
                                 <option value="" selected disabled> Select a role </option>
                                 <option value="student">Student</option>
                                 <option value="teacher">Teacher</option>
@@ -51,7 +51,7 @@
                         <select class="form-select" id="class_id" name="class_id">
                                 <option value="">--- Select a Class---</option>
                                 {% for cls in classes %} <!--use cls for class because of class is a reversed keyword in jinja-->
-                                <option value="{{class.class_id}}">{{ cls.class_name }} (Year {{cls.year_group}})</option>
+                                <option value="{{cls.class_id}}">{{ cls.class_name }} (Year {{cls.year_group}})</option>
                                 {% endfor %}
                         </select>
                 </div>
@@ -83,8 +83,8 @@
 <script>
         function toggleTeacherFields(){
                 const role = document.getElementById('role').value;
-                const teacherFields = document.getElementById('teacher-fields');
-                const studentFields = document.getElementById('student-fields');
+                const teacherFields = document.getElementById('teacher_fields');
+                const studentFields = document.getElementById('student_fields');
 
                 if (role == 'teacher'){
                         teacherFields.style.display = 'block';

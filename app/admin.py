@@ -81,7 +81,7 @@ def add_user():
 
         elif role == 'student':
             from datetime import datetime
-            dob_date = datetime.strptime(dob, '%D-%m-%y').date()
+            dob_date = datetime.strptime(dob, '%Y-%m-%d').date()
             new_student = Student(
                 user_id = new_user.user_id,
                 full_name = full_name,
@@ -89,13 +89,15 @@ def add_user():
                 class_id = int(class_id),
                 date_enrolled = datetime.today().date()
             )
+            db.session.add(new_student)
 
         db.session.commit()
 
         flash(f'{role} created. Username: {username} | Temp password: {temp_password}', category='success')
         return redirect(url_for('admin.add_user'))
 
-    return render_template('add_user.html') 
+    classes = Class.query.all()
+    return render_template('add_user.html', classes=classes) 
 
 
 
@@ -126,13 +128,13 @@ def add_class():
             return redirect(url_for('admin.add_class'))
 
         if teacher_id:
-            teacher_id_int = int(teacher_id)
+            teacher_id = int(teacher_id)
         else:
             teacher_id = None
 
         new_class = Class(
             class_name = class_name,
-            year_group = year_group,
+            year_group = year_group_int,
             teacher_id = teacher_id
         )
         db.session.add(new_class)
