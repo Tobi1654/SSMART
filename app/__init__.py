@@ -26,6 +26,10 @@ def create_app():
     from app.auth import auth
     app.register_blueprint(auth)
 
+# registering the blue print for admin
+    from app.admin import admin
+    app.register_blueprint(admin)
+
 # defining the route in init.py
     #from .views import views 
     #from .auth import auth
