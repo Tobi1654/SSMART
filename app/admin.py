@@ -11,12 +11,12 @@ def generate_temp_password(length=8):
     characters = string.ascii_letters + string.digits
     return ''.join(secrets.choice(characters) for _ in range(length))
 
-@admin.route('/admin/dashboard')
+@admin.route('/admin_dashboard')
 @admin_required
 def dashboard():
     return render_template('admin_dashboard.html')
 
-admin.route('/admin/add_teacher', method=['GET', 'POST'])
+@admin.route('/admin/add_teacher', methods=['GET', 'POST'])
 @admin_required
 def add_teacher():
     if request.method == 'POST':
@@ -27,6 +27,10 @@ def add_teacher():
 
         if not full_name or not email:
             flash('Full name and email are required', category='error')
+            return redirect(url_for('admin.add_teacher'))
+
+        if '@' not in email:
+            flash('Valid email is required', category='error')
             return redirect(url_for('admin.add_teacher'))
 
         if User.query.filter_by(email=email).first():
@@ -41,7 +45,7 @@ def add_teacher():
             username = f'{base_username}{counter}'
             counter += 1
 
-        temp_password = generate_temp_password
+        temp_password = generate_temp_password()
 
         new_user = User(
             username=username,
@@ -51,7 +55,7 @@ def add_teacher():
 
         new_user.set_password(temp_password)
         db.session.add(new_user)
-        db.session.flush
+        db.session.flush()
 
         new_teacher = Teacher(
             user_id = new_user.user_id,
@@ -61,7 +65,7 @@ def add_teacher():
         )
 
         db.session.add(new_teacher)
-        db.session.commit
+        db.session.commit()
 
         flash(f'Teacher created. Username: {username} | Temp password: {temp_password}', category='success')
         return redirect(url_for('admin.add_teacher'))
