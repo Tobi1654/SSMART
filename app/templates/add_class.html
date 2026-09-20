@@ -8,71 +8,43 @@
 
 <form action="{{url_for('admin.add_class') }}" method="POST">
         <div class="form-group">
-                <label for="class_name" class="form-label">Full Name</label>
+                <label for="class_name" class="form-label">Enter class name</label>
                 <input type="text"
                         class="form-control"
-                        id="full_name"
-                        name="full_name"
-                        placeholder="Mr. Mike Bennet"
+                        id="class_name"
+                        name="class_name"
+                        placeholder="12 Computing"
                         required
-                        minlength="3"
+                        minlength="2"
                         pattern="[A-Za-z\s\-]+"
                 >
 
-                <label for="email" class="form-label">Email</label>
-                <input type="email"
-                        class="form-control"
-                        id="email"
-                        name="email"
-                        placeholder="teacher1@school.org.uk"
-                        required
-                >
-
                 <div class="mb-3">
-                        <label for="role" class="form-label">Role:</label>
-                        <select class="form-select" id="role" name="role">
-                                <option value="" selected disabled> Select a role </option>
-                                <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="admin">Admin</option>
+                        <label for="year_group" class="form-label">Role:</label>
+                        <select class="form-select" id="year_group" name="year_group">
+                                <option value="" selected disabled> Select a year group </option>
+                                <option value="yr7">Year 7</option>
+                                <option value="yr8">Year 8</option>
+                                <option value="yr9">Year 9</option>
+                                <option value="yr10">Year 10</option>
+                                <option value="yr11">Year 11</option>
+                                <option value="yr12">Year 12</option>
+                                <option value="yr13">Year 13</option>
                         </select>
                 </div>
 
                 <div id="teacher_fields">
-                        <label for="department" class="form-label">Department</label>
-                        <input type="text"
-                                class="form-control"
-                                id="department"
-                                name="department"
-                                placeholder="e.g. Humanities"
-                        >
-
-                        <label for="subject" class="form-label">Subjects</label>
-                        <textarea class="form-control"
-                                id="subject"
-                                name="subject"
-                                placeholder="e.g Maths, Physics, Biology"
-                                rows="3"
-                        ></textarea>
+                    <label for="teacher_id" class="form-label">Teacher(optional)</label>
+                    <select class="form-select" id="year_group" name="year_group">
+                                <option value=""> No teacher assigned </option>
+                                {% for teachers in teachers %}
+                                <option value="{{teacher.teacher_id}}">{{ teacher.full_name }}</option>
+                                {% endfor %}
+                    </select>
                 </div>
 
                 <button class="btn btn-primary" type="submit">Create New User</button>
         </div>
 </form>
 </div>
-
-<script>
-        function toggleTeacherFields(){
-                const role = document.getElementById('role').value;
-                const teacherFields = document.getElementById('teacher-fields');
-                if (role == 'teacher'){
-                        teacherFields.style.display = 'block';
-                }
-                else {
-                        teacherFields.style.display = 'none';
-                }
-        }
-</script>
-
-
 {% endblock %}

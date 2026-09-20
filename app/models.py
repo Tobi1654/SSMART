@@ -58,7 +58,7 @@ class Class(db.Model):
     __tablename__ = 'classes'
     class_id = db.Column(db.Integer, primary_key = True)
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable = False)
-    class_name = db.Column(db.String(10), unique = True, nullable = False)
+    class_name = db.Column(db.String(50), unique = True, nullable = False)
     year_group = db.Column(db.Integer, nullable = False)
 
 #attendance database model, links to both student and class table
