@@ -25,11 +25,27 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <div>
                 <a class="nav-item nav-link" id="home" href="/">Home</a>
-                <a class="nav-item nav-link" id="login" href="/login">Login</a>
-                <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+                {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                <a class="nav-item nav-link" href="{{ url_for('admin.dashboard') }}">Admin Dashboard</a>
                 <a class="nav-item nav-link" href="{{ url_for('admin.add_user') }}">Add User</a>
+                <a class="nav-item nav-link" href="{{ url_for('admin.add_class') }}">Add Class</a>
+                <a class="nav-item nav-link" href="{{ url_for('admin.students') }}">Students</a>
+
+                {% elif current_user.role == 'teacher' %}
+                <a class="nav-item nav-link" href="{{ url_for('auth.teacher_dashboard') }}">Teacher Dashboard</a>
+
+                {% elif current_user.role == 'student' %}
+                <a class="nav-item nav-link" href="{{ url_for('auth.student_dashboard') }}">My Dashboard</a>
+                {% endif %}
+
+                <a class="nav-item nav-link" id="logout" href="{{ url_for('auth.logout') }}">Logout</a>
+
+                {% else %}
+                <a class="nav-item nav-link" id="login" href="{{ url_for('auth.login') }}">Login</a>
             </div>
-        </div> 
+            {% endif %}
+        </div>
     </nav>
 
     <!--Flashed messages rule for error and success alert-->

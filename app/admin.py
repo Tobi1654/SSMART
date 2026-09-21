@@ -167,7 +167,7 @@ def students():
     students_list = query.all()
 
     student_data = []
-    for s in student_data:
+    for s in students_list:
         user = User.query.get(s.user_id)
         student_class = Class.query.get(s.class_id)
         student_data.append({
