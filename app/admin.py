@@ -191,3 +191,8 @@ def students():
         class_filter = class_filter,
         year_filter  =year_filter
     )
+
+@admin.route
+@admin_required
+def edit_student():
+    

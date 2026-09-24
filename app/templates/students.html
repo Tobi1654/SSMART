@@ -61,6 +61,7 @@
                     <th>Class</th>
                     <th>Date of Birth</th>
                     <th>Enrolled</th>
+                    <th>Actions</th>
                     </tr>
             </thead>
 
@@ -73,6 +74,12 @@
                     <td>{{ s.class_name }} (Year {{ s.year_group }})</td>
                     <td>{{ s.dob.strftime('%d/%m/%Y') }}</td>
                     <td>{{ s.date_enrolled.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <a href="{{url_for('admin.edit_student', 'student_id=s.student_id')}}" class="btn btn-primary">Edit</a>
+                        <a href="{{url_for('admin.delete_student', 'student_id=s.student_id')}}" 
+                            class="btn btn-danger"
+                            onclick="return confirm('Are you sure ypu want to delete {{s.full_name}} account');">Delete</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
