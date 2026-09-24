@@ -242,3 +242,17 @@ def edit_student(student_id):
     return render_template('edit_student.html', student=student, user=user, classes=classes)
 
 @admin.route('/admin/delete_student/<int:student_id>', methods=['POST', 'GET'])
+@admin_required
+def delete_student(student_id):
+    student = Student.query.get_or_404(student_id)
+    user = User.query.get(student.user_id)
+
+    student_name = student.full_name
+
+    db.session.delete(student)
+    if user:
+        db.session.delete(user)
+    db.session.commit()
+
+    flash(f'Student account for {student_name} has been deleted', category='success')
+    return redirect(url_for('admin.students'))
