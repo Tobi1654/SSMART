@@ -241,4 +241,4 @@ def edit_student(student_id):
     classes = Class.query.all()
     return render_template('edit_student.html', student=student, user=user, classes=classes)
 
-@admin.route
+@admin.route('/admin/delete_student/<int:student_id>', methods=['POST', 'GET'])
