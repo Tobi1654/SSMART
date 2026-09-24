@@ -193,10 +193,10 @@ def students():
         year_filter  =year_filter
     )
 
-@admin.route
+@admin.route('/admin/edit_student/<int:student_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_student(student_id):
-    student = student.query.get_or_404(student_id)
+    student = Student.query.get_or_404(student_id)
     user = User.query.get(student.user_id)
 
     if request.method == "POST":
@@ -207,42 +207,38 @@ def edit_student(student_id):
 
         if not full_name or not dob or not email or not class_id:
             flash('All fields are required', category='error')
-            return redirect(url_for('admin.edit_students', student_id=student_id))
+            return redirect(url_for('admin.edit_student', student_id=student_id))
 
         if '@' not in email:
             flash('Valid email is required', category='error')
-            return redirect(url_for('admin.edit_students', student_id=student_id))
+            return redirect(url_for('admin.edit_student', student_id=student_id))
 
         existing = User.query.filter_by(email=email).first()
         if existing and  existing.user_id != user.user_id:
             flash('This email already exists by another account', category='error')
-            return redirect(url_for('admin.edit_students', student_id=student_id))
+            return redirect(url_for('admin.edit_student', student_id=student_id))
 
         if not Class.query.get(class_id):
             flash('The class you selected does not exists', category='error')
-            return redirect(url_for('admin.edit_students', student_id=student_id))
+            return redirect(url_for('admin.edit_student', student_id=student_id))
 
         try:
-            dob = datetime.strptime(dob, '%Y-%m-%d')
+            dob.date = datetime.strptime(dob, '%Y-%m-%d')
         except ValueError:
             flash('Invalid date of birth', category='error')
-            return redirect(url_for('admin.edit_students', student_id=student_id))
+            return redirect(url_for('admin.edit_student', student_id=student_id))
 
         student.full_name = full_name
-        student.dob = dob.date
+        student.dob = dob.date()
         student.class_id = int(class_id)
         user.email = email 
 
         db.session.commit()
 
-        flash('Student account has been updated', category='error')
+        flash('Student account has been updated', category='success')
         return redirect(url_for('admin.students'))
 
-    classes = Class.query.all
-    return render_template('edt_student.html', students=students, user=user, classes=classes)
+    classes = Class.query.all()
+    return render_template('edit_student.html', student=student, user=user, classes=classes)
 
 @admin.route
-@admin_required
-def delete_student(student_id):
-    student = student.query.get_or_404(student_id)
-    user = User.query.get(student.user_id)

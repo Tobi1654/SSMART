@@ -1,0 +1,68 @@
+{% extends "base.html" %} {% block title %}Edit Student{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+<h3 align="center">Edit Student</h3>
+
+<form action="{{url_for('admin.edit_student', student_id=student.student_id) }}" method="POST">
+        <div class="form-group">
+                <label for="full_name" class="form-label">Full Name</label>
+                <input type="text"
+                        class="form-control"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Mr. Mike Bennet"
+                        required
+                        minlength="3"
+                        pattern="[A-Za-z\s\-]+"
+                        value="{{ student.full_name }}"
+                >
+
+                <label for="email" class="form-label">Email</label>
+                <input type="email"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        placeholder="teacher1@school.org.uk"
+                        required
+                        value="{{ user.email }}"
+                >
+
+                <!--<div class="mb-3">
+                        <label for="role" class="form-label">Role:</label>
+                        <select class="form-select" id="role" name="role" required onchange="toggleFields()" required>
+                                <option value="" selected disabled> Select a role </option>
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="admin">Admin</option>
+                        </select>
+                </div>-->
+
+                <div id="student_fields">
+                        <label for="dob", class="form-label">Date of Birth</label>
+                        <input type="date"
+                                class="form-control"
+                                id="dob"
+                                name="dob"
+                                required
+                                value="{{ student.dob.strftime('%Y-%m-%d') }}"
+                        >
+
+                        <label for="class_id" class="form-label">Class</label>
+                        <select class="form-select" id="class_id" name="class_id" required>
+                            {% for cls in classes %}
+                                <option value="{{ cls.class_id }}" {% if cls.class_id == student.class_id %}selected{% endif %}>
+                                {{ cls.class_name }} (Year {{ cls.year_group }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                </div>
+                <button class="btn btn-primary" type="submit">Update Student Details</button>
+                <a href="{{ url_for('admin.students') }}" class="btn btn-danger">Cancel</a>
+        </div>
+</form>
+</div>
+
+{% endblock %}
