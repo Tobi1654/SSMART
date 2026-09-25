@@ -52,11 +52,11 @@
 
                         <label for="class_id" class="form-label">Class</label>
                         <select class="form-select" id="class_id" name="class_id" required>
-                            {% for cls in classes %}
+                                {% for cls in classes %}
                                 <option value="{{ cls.class_id }}" {% if cls.class_id == student.class_id %}selected{% endif %}>
                                 {{ cls.class_name }} (Year {{ cls.year_group }})
                                 </option>
-                            {% endfor %}
+                                {% endfor %}
                         </select>
                 </div>
                 <button class="btn btn-primary" type="submit">Update Student Details</button>

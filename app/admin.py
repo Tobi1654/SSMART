@@ -223,13 +223,13 @@ def edit_student(student_id):
             return redirect(url_for('admin.edit_student', student_id=student_id))
 
         try:
-            dob.date = datetime.strptime(dob, '%Y-%m-%d')
+            dob_date = datetime.strptime(dob, '%Y-%m-%d').date()
         except ValueError:
             flash('Invalid date of birth', category='error')
             return redirect(url_for('admin.edit_student', student_id=student_id))
 
         student.full_name = full_name
-        student.dob = dob.date()
+        student.dob = dob_date
         student.class_id = int(class_id)
         user.email = email 
 
