@@ -278,3 +278,4 @@ def student_profile(student_id):
                             behaviour=behaviour, 
                             notes=notes
     )
+
