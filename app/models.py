@@ -70,6 +70,7 @@ class Attendance(db.Model):
     class_id = db.Column(db.Integer, db.ForeignKey('classes.class_id'), nullable = False)
     date = db.Column(db.Date, nullable = False) # ask mr parr, if datetime is best or just date
     status = db.Column(db.String(20), nullable = False)
+    actions = db.Column(db.String(300)) #add into validation tables
 
 #subject database model
 class Subject(db.Model):
