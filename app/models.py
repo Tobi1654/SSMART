@@ -43,6 +43,7 @@ class Student(db.Model):
     full_name = db.Column(db.String(100), nullable = False)
     dob = db.Column(db.Date, nullable = False)
     date_enrolled = db.Column(db.DateTime, default = datetime.utcnow)
+    is_sen = db.Column(db.Boolean, default = False) #added new column for sen tag on student profile 25/09/2026
 
 #teacher database models, links to users table
 class Teacher(db.Model):
@@ -127,3 +128,21 @@ class Message(db.Model):
     content = db.Column(db.String(30000), nullable = False)
     timestamp = db.Column(db.DateTime, default = datetime.utcnow)
     read_status = db.Column(db.Boolean, default = False)
+
+# adding new tables Teacher notes/Behaviour for student profile.
+class TeacherNote(db.Model):
+    __tablename__ = 'teacher_notes'
+    note_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'), nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable=False)
+    content = db.Column(db.String(1000), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Behaviour(db.Model):
+    __tablename__ = 'behaviour'
+    behaviour_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'), nullable=False)
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable=False)
+    behaviour_type = db.Column(db.String(100), nullable=False)  # "Positive", "Negative"
+    description = db.Column(db.String(1000), nullable=False)
+    points = db.Column(db.Integer, nullable=False)  # Points awarded or removed
