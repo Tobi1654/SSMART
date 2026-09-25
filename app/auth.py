@@ -44,7 +44,7 @@ def login():
         if user.role == 'student':
             return redirect(url_for('auth.student_dashboard'))
         elif user.role == 'teacher':
-            return redirect(url_for('auth.teacher_dashboard'))
+            return redirect(url_for('teacher.dashboard'))
         elif user.role == 'admin':
             return redirect(url_for('admin.dashboard'))
 
@@ -55,10 +55,10 @@ def login():
 def student_dashboard():
     return 'Student Dashboard'
 
-@auth.route('/teacher_dashboard')
-@login_required
-def teacher_dashboard():
-    return 'Teacher Dashboard'
+#@auth.route('/teacher_dashboard')
+#@login_required
+#def teacher_dashboard():
+#    return 'Teacher Dashboard'
 
 #@auth.route('/admin_dashboard')
 #@login_required

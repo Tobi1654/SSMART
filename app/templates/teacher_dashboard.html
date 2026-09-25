@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Teacher Dashboard{% endblock %}
+
+{% block content %}
+
+<p class="dashboard_notice">Teacher Dashboard</p>
+
+<!--Welcome header message-->
+<div class="header">
+    <h2><strong>WELCOME, {{teacher.full_name}}</strong></h2>
+    <small class="text-muted">{{teacher.department}} Department</small>
+    <small class="text-muted">You are logged in as a Teacher</small>
+    <small class="text-muted">{{today_date}}</small>
+</div>
+
+<div class="classes-table">
+
+    <div>
+        <h3 class="card-title">My Classes</h3>
+
+        {% if classes %}
+            <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Year Group</th>
+                    <th>Students</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for c in classes %}
+                <tr>
+                    <td>{{ c.class_name }}</td>
+                    <td>{{ c.year_group }}</td>
+                    <td>{{ c.student_count  if c.student_count else '-'}}</td>
+                    <td><p class="text-muted">Implement attendance later</p></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">You have no classes assigned.......</p>
+        {% endif %}
+    </div>
+
+</div>
+
+
+{% endblock %}

@@ -30,6 +30,10 @@ def create_app():
     from app.admin import admin
     app.register_blueprint(admin)
 
+#registering the blueprint for teacher
+    from app.teacher import teacher
+    app.register_blueprint(teacher)
+
 # defining the route in init.py
     #from .views import views 
     #from .auth import auth
