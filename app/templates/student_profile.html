@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+
+<div class="title-bar">
+    <div class="border rounded p-2 mb-2">
+        <h3>{{student.full_name}} Profile</h3>
+    </div>
+</div>
+
+<!--Student info card-->
+<div class="card">
+
+    <div class="student-info">
+        <div class="card-body">
+            <div class="student-image">
+                <img src="..." class="rounded mx-auto d-block" alt="...">
+            </div>
+
+            <div class="student_details">
+                <p><strong>NAME:</strong> {{student.full_name}}</p>
+                <p><strong>YEAR:</strong> {{student_class.year_group}}</p>
+                <p><strong>ATTENDANCE:</strong>implementing later....r</p>
+
+                {% if student.is_sen %}
+                <p><strong>SEN STUDENT</strong></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!--Grades section-->
+<div class="card">
+
+    <div class="grades-info">
+        <div class="card-body">
+            <h4>GRADES</h4>
+
+            {% if grades %}
+                {% for g in grades %}
+                    <div class="border rounded p-2 mb-2">
+                        {{g.assessment_name}} - {{g.percentage}}% - ({{g.letter_grade}})                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No grades recorded...........</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!--Behaviour section-->
+<div class="card">
+    <div class="card-body">
+        <h4>BEHAVIOUR LOG</h4>
+
+        {% if behaviour %}
+            {% for b in behaviour %}
+            <p>
+                [{{b.timestamp.strftime('%d/%m/%Y')}}]  -
+                [{{b.behaviour_type}}]  -
+                [{{b.points}} points]   -
+                [{{b.description}}]
+            </p>
+            {% endfor %}
+        {% else %}
+            <p>No behaviour records......</p>
+        {% endif %}
+    </div>
+</div>
+
+<!--Teacher notes section-->
+<div class="card">
+    <div class="card-body">
+        <h4>TEACHER NOTES</h4>
+
+        {% if notes %}
+            {% for n in notes %}
+            <p>
+                [{{n.timestamp.strftime('%d/%m/%Y')}}] -
+                [{{n.content}}]
+            </p>
+            {% endfor %}
+        {% else %}
+            <p>No teacher notes records................</p>
+        {% endif %}
+    </div>
+</div>
+
+<!--buttons-->
+<div class="other-actions-buttons">
+    <button type="button" class="btn btn-primary">Generate Report</button>
+    <button type="button" class="btn btn-primary">Message Student</button>
+    <a href="{{ url_for('admin.students') }}" class="btn btn-secondary">Back to students</a>
+</div>
+
+
+{% endblock %}

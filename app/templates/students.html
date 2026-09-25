@@ -68,7 +68,11 @@
             <tbody>
                 {% for s in students %}
                 <tr>
-                    <td>{{ s.full_name }}</td>
+                    <td>
+                        <a href="{{url_for('admin.student_profile', student_id=s.student_id)}}">
+                            {{ s.full_name }}
+                        </a>
+                    </td>
                     <td>{{ s.username }}</td>
                     <td>{{ s.email }}</td>
                     <td>{{ s.class_name }} (Year {{ s.year_group }})</td>

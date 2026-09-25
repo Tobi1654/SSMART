@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import User, Teacher, Class, Student
+from app.models import User, Teacher, Class, Student, Grade, Behaviour, TeacherNote
 from app.utils import admin_required
 from datetime import datetime
 import secrets
@@ -256,3 +256,25 @@ def delete_student(student_id):
 
     flash(f'Student account for {student_name} has been deleted', category='success')
     return redirect(url_for('admin.students'))
+
+#creating routes for student profile
+@admin.route('/admin/student/<int:student_id>')
+@admin_required
+def student_profile(student_id):
+    student = Student.query.get_or_404(student_id)
+    user = User.query.get(student.user_id)
+    student_class = Class.query.get(student.class_id)
+
+    grades = Grade.query.filter_by(student_id=student_id).all()
+    behaviour = Behaviour.query.filter_by(student_id=student_id).all()
+    notes = TeacherNote.query.filter_by(student_id=student_id).all()
+
+
+    return render_template('student_profile.html', 
+                            student=student, 
+                            user=user, 
+                            student_class=student_class, 
+                            grades=grades, 
+                            behaviour=behaviour, 
+                            notes=notes
+    )
