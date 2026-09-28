@@ -4,6 +4,7 @@ from app.models import Teacher, Class, Student, Attendance
 from app.utils import teacher_required
 from flask_login import current_user
 from datetime import date
+from app.attendance_calculating import calculate_attendance_percentage
 
 teacher = Blueprint('teacher', __name__)
 
@@ -85,6 +86,11 @@ def save_attendance(class_id):
             db.session.add(record)
 
     db.session.commit()
+
+    for student in  students: # every time the attendance is saved, each student get their percentage recalculated, which is then stored in the student record
+        percentage = calculate_attendance_percentage(student.student_id)
+        student.attendance_percentage = percentage
+    db.session.commit
 
     flash('Attendance saved successfully', category='success')
     return redirect(url_for('teacher.dashboard'))

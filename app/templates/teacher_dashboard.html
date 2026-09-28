@@ -25,6 +25,15 @@
                     <th>Class</th>
                     <th>Year Group</th>
                     <th>Students</th>
+                    <th>Attendance</th>
+                        <td>
+                            {% set avg  = c.average_attendance %}
+                            {% if avg > 0 %}
+                                {{avg}}%
+                            {%else%}
+                                <p class="text-muted">---</p>
+                            {% endif %}
+                        </td>
                     <th>Actions</th>
                 </tr>
             </thead>

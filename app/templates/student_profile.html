@@ -21,7 +21,17 @@
             <div class="student_details">
                 <p><strong>NAME:</strong> {{student.full_name}}</p>
                 <p><strong>YEAR:</strong> {{student_class.year_group}}</p>
-                <p><strong>ATTENDANCE:</strong>implementing later....r</p>
+                <p>
+                    <strong>ATTENDANCE:</strong>
+                    {% if student.attendance_percentage and student.attendance_percentage >0 %} <!--it is like this to avoid the error since the default student.attendance_percentage is 0-->
+                        {{ student.attendance_percentage }}%
+                        {% if student.attendance_percentage < 80 %} <!--checks whether the attendance is below 80%-->
+                            <span class="badge text-bg-danger">Attendance below 80%</span><!--threshold badge-->
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted">No attendance records</p> <!--shows no record whenno attendance is logged-->
+                    {% endif %}
+                </p>
 
                 {% if student.is_sen %}
                 <p><strong>SEN STUDENT</strong></p>
