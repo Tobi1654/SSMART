@@ -35,7 +35,9 @@
                     <td>{{ c.class_name }}</td>
                     <td>{{ c.year_group }}</td>
                     <td>{{ c.student_count  if c.student_count else '-'}}</td>
-                    <td><p class="text-muted">Implement attendance later</p></td>
+                    <td>
+                        <a href="{{url_for('teacher.attendance', class_id=c.class_id)}}" class="btn-primary">Mark Attendance</a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

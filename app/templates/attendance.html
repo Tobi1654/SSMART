@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{%block title%}Mark Attendance{% endblock %}
+
+{% block content %}
+
+<div class="title-bar">
+    <div class="border rounded p-2 mb-2">
+        <h3>mark Attendance - {{classroom.class_name}}</h3>
+    </div>
+</div>
+
+<!--Header-->
+<div class="heading-card">
+    <div class="card">
+        <h3>MARK ATTENDANCE</h3>
+        <p><strong>{{classroom.class_name}}</strong> (Year {{classroom.year_group}}). {{today.strftime('%d/%m/%Y')}}</p>
+    </div>
+
+    <form method="POST" action="{{url_for('teacher.save_attendance', class_id=classroom.class_id)}}">
+
+    <div class="mark-all-present-button">
+        <button type="button" class="btn btn-success" onclick="markAllPresent()">Mark All Present</button>
+    </div>
+</div>
+
+<div class="marking-section">
+    {% if students %}
+
+    <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th class="text-end">Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in students %}
+                    {% set status = existing_statuses.get(s.student_id, 'not_marked') %}
+
+                    {% if status == 'present' %}
+                        {% set btn_class = 'btn-success' %}
+                        {% set btn_label = 'Present' %}
+
+                    {% elif status == 'late' %}
+                        {% set btn_class = 'btn-warning' %}
+                        {% set btl_label = 'Late' %}
+
+                    {% elif status == 'absent' %}
+                        {% set btn_class = 'btn-danger' %}
+                        {% set btn_label = 'Absent' %}
+
+                    {% else %}
+                        {% set btn_class = 'btn-secondary' %}
+                        {% set btn_label = 'Not Marked'%}
+
+                    {% endif %}
+
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{ s.full_name}}</td>
+
+                        <td class="button-togggle">
+                            <input type="hidden"
+                                    name="status_{{s.student_id}}"
+                                    id="input_{{s.student_id}}"
+                                    value="{{status}}">
+
+                            <button type="button"
+                                    class="btn btn-status {{btn_class}}"
+                                    id="btn_{{s.student_id}}"
+                                    data-student-id="{{ s.student_id}}"
+                                    onclick="cycleStatus(this)">
+                                {{btn_label}}
+                            </button>
+                        </td>
+
+                        <td>
+                            <input type="text"
+                                    class="form-control"
+                                    name="actions_{{s.student_id}}"
+                                    placeholder="(optional)"
+                                    value="{{existing_actions.get(s.student_id, '')}}">
+                        </td>
+                    </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Save Register</button>
+            <a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary">Leave</a>
+        </div>
+
+    {% endif %}
+    </form>
+</div>
+</div>
+
+
+
+
+<script>
+    function cycleStatus(btn) {
+        const studentId = btn.dataset.studentId;
+        const input = document.getElementById('input_' + studentId);
+
+        if (input.value === 'not_marked'){
+            input.value = 'present';
+            btn.className = 'btn btn-status btn-success';
+            btn.textContent = 'Present';
+        }
+
+        else if (input.value === 'present'){
+            input.value = 'late';
+            btn.className = 'btn btn-status btn-warning';
+            btn.textContent = 'Late';
+        }
+
+        else if (input.value === 'late'){
+            input.value = 'absent';
+            btn.className = 'btn btn-status btn-danger';
+            btn.textContent = 'Absent';
+        }
+        else {
+            input.value = 'not_marked';
+            btn.className = 'btn btn-status btn-secondary';
+            btn.textContent = 'Not Marked';
+        }
+    }
+
+// AI assisted function
+    function markAllPresent(){
+        const buttons = document.querySelectorAll('.btn-status')
+        for (let i = 0; i < buttons.length; i++){
+            const btn = buttons[i];
+            const studentId = btn.dataset.studentId
+            const input = document.getElementById('input_' + studentId);
+            input.value = 'present';
+            btn.className = 'btn btn-status btn-success';
+            btn.textContent = 'Present'
+        }
+    }
+</script>
+
+{% endblock %}

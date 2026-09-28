@@ -43,7 +43,8 @@ class Student(db.Model):
     full_name = db.Column(db.String(100), nullable = False)
     dob = db.Column(db.Date, nullable = False)
     date_enrolled = db.Column(db.DateTime, default = datetime.utcnow)
-    is_sen = db.Column(db.Boolean, default = False) #added new column for sen tag on student profile 25/09/2026
+    is_sen = db.Column(db.Boolean, default = False) #added new column for sen tag on student profile 25/09/2026#
+    attendance_percentage = db.Column(db.Float, default=0.0) #added anew column for the attendance percentage that way i can engage routes and call it for the calculation
 
 #teacher database models, links to users table
 class Teacher(db.Model):
@@ -61,6 +62,10 @@ class Class(db.Model):
     teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.teacher_id'), nullable = True)
     class_name = db.Column(db.String(50), unique = True, nullable = False)
     year_group = db.Column(db.Integer, nullable = False)
+
+    @property
+    def student_count(self):
+        return Student.query.filter_by(class_id=self.class_id).count()
 
 #attendance database model, links to both student and class table
 class Attendance(db.Model):
