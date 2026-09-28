@@ -67,6 +67,14 @@ class Class(db.Model):
     def student_count(self):
         return Student.query.filter_by(class_id=self.class_id).count()
 
+    @property
+    def average_attendance(self): #loops through every student in the class and averages their percentages
+        students = Student.query.filter_by(class_id=self.class_id).all()
+        if not students:
+            return 0.0
+        total = sum(s.attendance_percentage or 0 for s in students)
+        return round(total/len(students), 1)
+
 #attendance database model, links to both student and class table
 class Attendance(db.Model):
     __tablename__ = 'attendance'

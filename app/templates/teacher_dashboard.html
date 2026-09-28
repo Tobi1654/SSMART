@@ -26,14 +26,6 @@
                     <th>Year Group</th>
                     <th>Students</th>
                     <th>Attendance</th>
-                        <td>
-                            {% set avg  = c.average_attendance %}
-                            {% if avg > 0 %}
-                                {{avg}}%
-                            {%else%}
-                                <p class="text-muted">---</p>
-                            {% endif %}
-                        </td>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -44,6 +36,14 @@
                     <td>{{ c.class_name }}</td>
                     <td>{{ c.year_group }}</td>
                     <td>{{ c.student_count  if c.student_count else '-'}}</td>
+                    <td>
+                        {% set avg  = c.average_attendance %}
+                        {% if avg > 0 %}
+                            {{avg}}%
+                        {%else%}
+                            <p class="text-muted">---</p>
+                        {% endif %}
+                        </td>
                     <td>
                         <a href="{{url_for('teacher.attendance', class_id=c.class_id)}}" class="btn-primary">Mark Attendance</a>
                     </td>

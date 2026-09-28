@@ -90,7 +90,7 @@ def save_attendance(class_id):
     for student in  students: # every time the attendance is saved, each student get their percentage recalculated, which is then stored in the student record
         percentage = calculate_attendance_percentage(student.student_id)
         student.attendance_percentage = percentage
-    db.session.commit
+    db.session.commit()
 
     flash('Attendance saved successfully', category='success')
     return redirect(url_for('teacher.dashboard'))
