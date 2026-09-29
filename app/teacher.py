@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import Teacher, Class, Student, Attendance
+from app.models import Teacher, Class, Student, Attendance, Subject, Grade
 from app.utils import teacher_required
 from flask_login import current_user
 from datetime import date
@@ -98,3 +98,36 @@ def save_attendance(class_id):
 
     flash('Attendance saved successfully', category='success')
     return redirect(url_for('teacher.dashboard'))
+
+@teacher.route('/teacher/grades/<int:class_id>/<subject>/enter', methods=['GET','POST'])
+@teacher_required
+def enter_grades(subject, class_id):
+    current_teacher = get_current_teacher()
+    classroom = Class.query.get_or_404(class_id)
+
+    if classroom.teacher_id != current_teacher.teacher_id: #this checks if the teacher entering the garde does teach this class
+        flash('You are only able to enter grades for your own class', category='error')
+        return redirect(url_for('teacher.dashboard'))
+
+    students = Student.query.filter_by(class_id=class_id).all()
+
+    if request.method == 'POST':
+        assessment_name = request.form.get('assessment_name', '').strip()
+        max_score = request.form.get('max_score','').strip()
+        assessment_date = request.form.get('assessment_date')
+
+
+        if not assessment_date or not assessment_name or not max_score: #this validates that all field are required
+            flash('All fields are required', category='error')
+            return redirect(url_for('teacher.enter_grades', class_id=class_id, subject=subject))
+
+            try:
+                max_score_int = int(max_score)
+                if max_score <= 0:
+                    raise ValueError
+            except ValueError:
+                flash('Invalid max_score, must be greater than 0', 'error')
+                return redirect(url_for('teacher.enter_grades', class_is=class_id, subject=subject))
+
+            
+
