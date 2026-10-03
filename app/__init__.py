@@ -34,6 +34,7 @@ def create_app():
     from app.teacher import teacher
     app.register_blueprint(teacher)
 
+    #part of learning
 # defining the route in init.py
     #from .views import views 
     #from .auth import auth

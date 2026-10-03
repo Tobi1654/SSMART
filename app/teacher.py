@@ -9,9 +9,10 @@ from app.attendance_calculating import calculate_attendance_percentage, create_a
 
 teacher = Blueprint('teacher', __name__)
 
-def get_current_teacher():
+def get_current_teacher(): #fetches the teacher that is currently logged in
     return Teacher.query.filter_by(user_id=current_user.user_id).first()
 
+#routes the logged in tecaher to their dashboard
 @teacher.route('/teacher_dashboard')
 @teacher_required
 def dashboard():
@@ -30,12 +31,14 @@ def dashboard():
         classes = assigned_class
     )
 
+#routes the teacher to where they take the attendance
 @teacher.route('/teacher/attendance/<int:class_id>')
 @teacher_required
 def attendance(class_id):
     current_teacher =get_current_teacher()
     classroom = Class.query.get_or_404(class_id)
 
+    #this validates that the class the teacher is marking is assigned to them
     if classroom.teacher_id != current_teacher.teacher_id:
         flash('Can only mark attendance for your class', category='error')
         return redirect(url_for('teacher.dashboard'))
