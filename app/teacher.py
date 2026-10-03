@@ -4,6 +4,7 @@ from app.models import Teacher, Class, Student, Attendance, Subject, Grade
 from app.utils import teacher_required
 from flask_login import current_user
 from datetime import date
+from datetime import datetime as dt
 from app.attendance_calculating import calculate_attendance_percentage, create_attendance_flag
 
 teacher = Blueprint('teacher', __name__)
@@ -121,13 +122,81 @@ def enter_grades(subject, class_id):
             flash('All fields are required', category='error')
             return redirect(url_for('teacher.enter_grades', class_id=class_id, subject=subject))
 
-            try:
-                max_score_int = int(max_score)
-                if max_score <= 0:
-                    raise ValueError
-            except ValueError:
-                flash('Invalid max_score, must be greater than 0', 'error')
-                return redirect(url_for('teacher.enter_grades', class_is=class_id, subject=subject))
+        try:
+            max_score_int = int(max_score)
+            if max_score <= 0:
+                raise ValueError
+        except ValueError:
+            flash('Invalid max_score, must be greater than 0', 'error')
+            return redirect(url_for('teacher.enter_grades', class_is=class_id, subject=subject))
 
-            
+        subject_obj = Subject.query.filter_by(subject_name=subject)
+        if not subject_obj:
+            flash('Subject you entered was not found', category='error')
+            return redirect(url_for('teacher.dashboard'))
+
+        try:
+            get_date = dt.strptime(assessment_date, '%Y-%m-%d').date()
+        except ValueError:
+            flash('Invalid date', category='error')
+            return redirect(url_for('teacher.enter_grades', class_id=class_id, subject=subject))
+
+        saved_grades_count = 0
+        for student in students:
+            score_str = request.form.get(f'score_{student.student_id}', '').strip()
+
+            if not score_str:
+                continue
+
+            try:
+                score_int = int(score_str)
+            except ValueError:
+                continue
+
+            if score_int < 0 or score_int > max_score_int:
+                continue #test this
+
+            percentage = round((score_int/max_score_int)*100, 2)
+            if percentage >= 90:
+                letter = 'A*'
+            if percentage >= 80:
+                letter = 'A'
+            if percentage >= 70:
+                letter = 'B'
+            if percentage >= 60:
+                letter = 'C'
+            if percentage >= 50:
+                letter = 'D'
+            if percentage >= 40:
+                letter = 'E'
+            else:
+                letter = 'U'
+
+            grade = Grade(
+                student_id = student.student_id,
+                subject_id=subject_obj.subject_id,
+                assessment_name=assessment_name,
+                max_score = max_score_int,
+                student_score=score_int,
+                percentage=percentage,
+                letter_grade=letter,
+                assessment_date=get_date,
+                feedback=request.form.get(f'feedback{student.student_id}', '').strip or None
+            )
+            db.session.add(grade)
+            saved_grades_count+=1
+
+        db.session.commit()
+        flash(f'{saved_grades_count} grades added successfully', category='success')
+
+    #this splits the teacher's subject into a list
+        subject_list = [s.strip() for s in (current_teacher.subjects or '').split(',') if s.strip()]
+
+        return render_template(
+            'enter_grade.html',
+            classroom = classroom,
+            subject = subject,
+            today = date.today(),
+            subjects_list = subject_list
+        )
 
