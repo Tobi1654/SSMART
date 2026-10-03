@@ -1,0 +1,223 @@
+{% extends "base.html" %} {% block title %}Enter Grades{% endblock %}
+
+{% block content %}
+
+<div class="enter-grades-page">
+    <div class="header">
+        <h2><strong>ENTER GRADES - {{classroom.class_name}} - {{subject}}</strong></h2>
+        <small class="text-muted">{{classroom.class_name}} - {{subject}}</small>
+    </div>
+
+    <form method="POST">
+
+        <div class="assessment-info">
+            <label for="assessment_name">Assessment Name:</label>
+            <input type="text"
+                    class="form-control"
+                    id="assessment_name"
+                    placeholder="e.g. End of Year Test"
+                    required
+                    name="assessment_name"
+            >
+
+            <label for="max_score">Maximum Score</label>
+            <input type="number"
+                    class="form-control"
+                    id="max_score"
+                    min="1"
+                    placeholder="e.g 100"
+                    required
+                    name="max_score"
+            >
+
+            <label for="assessment_date">Date</label>
+            <input type="date"
+                    class="form-control"
+                    id="assessment_date"
+                    value="{{today.strftime('%Y-%m-%d')}}"
+                    required
+                    name="assessment_date"
+            >
+        </div>
+
+        <div class="classroom-stats">
+            <div class="grades-entered">
+                <small class="text-muted"> Num of Grades Entered</small>
+                <h4 id="stat-grades"> 0/{{students|length}}</h4>
+            </div>
+
+            <div class="class-average">
+                <small class="text-muted">Class Average</small>
+                <h4 id="stat-average">-</h4>
+            </div>
+
+            <div class="highest-grade">
+                <small class="text-muted">Highest Grade</small>
+                <h4 id="stat-highest">-</h4>
+            </div>
+
+            <div class="lowest-grade">
+                <small class="text-muted">Lowest Grade</small>
+                <h4 id="stat-lowest">-</h4>
+            </div>
+        </div>
+
+        <div class="enter-students-scores">
+            {% if students %}
+                <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Feedback<small>(optional)</small></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for s in students %}
+                    <tr>
+                        <td>{{loop.index}}</td>
+                        <td>{{ s.full_name }}</td>
+                        <td>
+                            <input class="form-control form-control-sm" 
+                                    type="text" 
+                                    placeholder="90" 
+                                    name="score_{{s.student_id}}"
+                                    oninput="calculate_percentage_and_grade(this,{{s.student_id}})"
+                            >
+                        </td>
+                        <td id="percent_{{s.student_id}}">-</td>
+                        <td id="grade_{{s.student_id}}">-</td>
+                        <td>
+                            <input class="form-control form-control-sm" 
+                                    type="text" 
+                                    placeholder="Well Done" 
+                                    name="feedback_{{s.student_id}}"
+                            >
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {%endif%}
+        </div>
+
+        <div class="submit-grades">
+            <button type="submit" class="btn btn-primary">Submit Grades</button>
+            <a href="{{url_for('teacher.dashboard')}}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+
+    function percentage_to_letter(ptl){ //this function converts the percentage to letter
+        if (ptl>=90) return 'A*';
+        if (ptl>=80) return 'A';
+        if (ptl>=70) return 'B';
+        if (ptl>=60) return 'C';
+        if (ptl>=50) return 'D';
+        if (ptl>=40) return 'E';
+        return 'U';
+    }
+
+    function calculate_percentage_and_grade(input, studentId){
+        var score = input.value;
+        var maxScore = document.getElementById('max_score').value; //this reads teh score and nax score the teacher had typed in
+
+        if (score == '' || maxScore == '' || maxScore <= 0){ //this checks if the input cells are empty
+            document.getElementById('percent_' + studentId).textContent = '-';
+            document.getElementById('grade_'+ studentId).textContent = '-';
+            return;
+
+        }
+
+        var percentage = (score/maxScore)*100; //calculates the percentage
+        percentage = Math.round(percentage*100)/100;
+
+        // calls the percentage to letter function
+        var letter = percentage_to_letter(percentage)
+
+        // this updates the cells
+        document.getElementById('percent_' + studentId).textContent = percentage + '%'
+        document.getElementById('grade_' + studentId).textContent = letter;
+
+        //calculates the stats box depending on the students performance
+        add_stats()
+    }
+
+    function add_stats() { //calculates the states boxes and updates each time
+        var inputs = document.querySelectorAll('input[name^="score_"]');
+        var maxScore = document.getElementById('max_score').value;
+
+        var grades_entered = 0;
+        var class_average = 0;
+        var highest_ptl = null;
+        var lowest_ptl = null;
+
+        //loops through every score the teacher inputs
+        for (var i = 0; i < inputs.length; i++){
+            var value = inputs[i].value.trim();
+
+            //skips empty boxes
+            if (value == ''){
+                continue;
+            }
+
+            var score = parseFloat(value);
+
+            if (isNaN(score)){
+                continue;
+            }
+
+            grades_entered += 1;
+            class_average = class_average + score;
+
+            //calculates the percentage
+            if (maxScore && maxScore > 0){
+                var ptl = (score/maxScore)*100;
+
+                if (highest_ptl === null || ptl > highest_ptl){
+                    highest_ptl = ptl;
+                }
+
+                if (lowest_ptl === null || ptl < lowest_ptl){
+                    lowest_ptl = ptl;
+                }
+            }
+        }
+
+        // adds i the number of grades entered
+        document.getElementById('stat-grades').textContent = grades_entered + '/' + inputs.length;
+
+        // updates in real time the class average
+        if (grades_entered > 0){
+            var average = class_average/grades_entered;
+            document.getElementById('stat-average').textContent = Math.round(average*100)/100;
+        } else{
+            document.getElementById('stat-average').textContent = '-';
+        }
+
+        // updates the highest grades in the class
+        if (highest_ptl !== null){
+            document.getElementById('stat-highest').textContent = percentage_to_letter(highest_ptl);
+        } else{
+            document.getElementById('stat-highest').textContent = '-';
+        }
+
+        //updates the lowest garde in the class
+        if (lowest_ptl !== null){
+            document.getElementById('stat-lowest').textContent = percentage_to_letter(lowest_ptl)
+        } else{
+            document.getElementById('stat-lowest').textContent = '-';
+        }
+    }
+
+</script>
+
+{% endblock %}

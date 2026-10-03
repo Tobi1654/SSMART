@@ -12,7 +12,7 @@ teacher = Blueprint('teacher', __name__)
 def get_current_teacher(): #fetches the teacher that is currently logged in
     return Teacher.query.filter_by(user_id=current_user.user_id).first()
 
-#routes the logged in tecaher to their dashboard
+#routes the logged in teacher to their dashboard
 @teacher.route('/teacher_dashboard')
 @teacher_required
 def dashboard():
@@ -105,7 +105,7 @@ def save_attendance(class_id):
 
 @teacher.route('/teacher/grades/<int:class_id>/<subject>/enter', methods=['GET','POST'])
 @teacher_required
-def enter_grades(subject, class_id):
+def enter_grades(class_id, subject):
     current_teacher = get_current_teacher()
     classroom = Class.query.get_or_404(class_id)
 
@@ -127,16 +127,23 @@ def enter_grades(subject, class_id):
 
         try:
             max_score_int = int(max_score)
-            if max_score <= 0:
+            if max_score_int <= 0:
                 raise ValueError
         except ValueError:
             flash('Invalid max_score, must be greater than 0', 'error')
-            return redirect(url_for('teacher.enter_grades', class_is=class_id, subject=subject))
+            return redirect(url_for('teacher.enter_grades', class_id=class_id, subject=subject))
 
-        subject_obj = Subject.query.filter_by(subject_name=subject)
+        #subject_obj = Subject.query.filter_by(subject_name=subject).first()
+        #if not subject_obj:
+        #    flash('Subject you entered was not found', category='error')
+        #    return redirect(url_for('teacher.dashboard'))
+
+        #since we have not yet created a dedicated admin page to add subject ill have to force create subjects
+        subject_obj = Subject.query.filter_by(subject_name=subject).first()
         if not subject_obj:
-            flash('Subject you entered was not found', category='error')
-            return redirect(url_for('teacher.dashboard'))
+            subject_obj = Subject(subject_name=subject)
+            db.session.add(subject_obj)
+            db.session.commit()
 
         try:
             get_date = dt.strptime(assessment_date, '%Y-%m-%d').date()
@@ -162,15 +169,15 @@ def enter_grades(subject, class_id):
             percentage = round((score_int/max_score_int)*100, 2)
             if percentage >= 90:
                 letter = 'A*'
-            if percentage >= 80:
+            elif percentage >= 80:
                 letter = 'A'
-            if percentage >= 70:
+            elif percentage >= 70:
                 letter = 'B'
-            if percentage >= 60:
+            elif percentage >= 60:
                 letter = 'C'
-            if percentage >= 50:
+            elif percentage >= 50:
                 letter = 'D'
-            if percentage >= 40:
+            elif percentage >= 40:
                 letter = 'E'
             else:
                 letter = 'U'
@@ -183,23 +190,25 @@ def enter_grades(subject, class_id):
                 student_score=score_int,
                 percentage=percentage,
                 letter_grade=letter,
-                assessment_date=get_date,
-                feedback=request.form.get(f'feedback{student.student_id}', '').strip or None
+                date=get_date,
+                feedback=request.form.get(f'feedback_{student.student_id}', '').strip() or None
             )
             db.session.add(grade)
             saved_grades_count+=1
 
         db.session.commit()
         flash(f'{saved_grades_count} grades added successfully', category='success')
+        return redirect(url_for('teacher.enter_grades', class_id=class_id, subject=subject))
 
     #this splits the teacher's subject into a list
-        subject_list = [s.strip() for s in (current_teacher.subjects or '').split(',') if s.strip()]
+    subject_list = [s.strip() for s in (current_teacher.subjects or '').split(',') if s.strip()]
 
-        return render_template(
-            'enter_grade.html',
-            classroom = classroom,
-            subject = subject,
-            today = date.today(),
-            subjects_list = subject_list
-        )
+    return render_template(
+        'enter_grades.html',
+        classroom = classroom,
+        subject = subject,
+        students=students,
+        today = date.today(),
+        subjects_list = subject_list
+    )
 
