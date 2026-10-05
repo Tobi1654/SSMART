@@ -2,104 +2,144 @@
 {% block title %}Student Profile{% endblock %}
 
 {% block content %}
-
-<div class="title-bar">
-    <div class="border rounded p-2 mb-2">
-        <h3>{{student.full_name}} Profile</h3>
-    </div>
-</div>
-
-<!--Student info card-->
-<div class="card">
-
-    <div class="student-info">
-        <div class="card-body">
-            <div class="student-image">
-                <img src="..." class="rounded mx-auto d-block" alt="...">
-            </div>
-
-            <div class="student_details">
-                <p><strong>NAME:</strong> {{student.full_name}}</p>
-                <p><strong>YEAR:</strong> {{student_class.year_group}}</p>
-                {% if student.attendance_percentage and student.attendance_percentage >0 %} <!--it is like this to avoid the error since the default student.attendance_percentage is 0-->
-                <p>
-                    <strong>ATTENDANCE:</strong>
-                        {{ student.attendance_percentage }}%
-                </p>
-                    {% if student.attendance_percentage < 80 %} <!--checks whether the attendance is below 80%-->
-                            <span class="badge text-bg-danger"><strong>At Risk: </strong>Attendance below 80%</span><!--threshold badge for attendance below 80%-->
-                    {% else %}
-                            <span class="badge text-bg-success"><strong>Good Standing: </strong>Attendance above 80%</span><!--threshold badge for attendance above 80%-->
-                    {% endif %}
-                {% else %}
-                    <p><strong>ATTENDANCE:</strong></p>
-                    <span class="text-muted">No attendance records</span> <!--shows no record whenno attendance is logged-->
-                {% endif %}
-
-                {% if student.is_sen %}
-                <p><strong>SEN STUDENT</strong></p>
-                {% endif %}
-            </div>
+<div>
+    <div class="title-bar">
+        <div class="header">
+            <h3>{{student.full_name}} Profile</h3>
         </div>
     </div>
 
-</div>
+    <!--Student info card-->
+    <div class="card">
 
-<!--Grades section-->
-<div class="card">
+        <div class="student-info">
+            <div class="card-body">
+                <div class="student-image">
+                    <img src="..." class="rounded mx-auto d-block" alt="...">
+                </div>
 
-    <div class="grades-info">
-        <div class="card-body">
-            <h4>GRADES</h4>
+                <div class="student_details">
+                    <p><strong>NAME:</strong> {{student.full_name}}</p>
+                    <p><strong>YEAR:</strong> {{student_class.year_group}}</p>
+                    {% if student.attendance_percentage and student.attendance_percentage >0 %} <!--it is like this to avoid the error since the default student.attendance_percentage is 0-->
+                    <p>
+                        <strong>ATTENDANCE:</strong>
+                            {{ student.attendance_percentage }}%
+                    </p>
+                        {% if student.attendance_percentage < 80 %} <!--checks whether the attendance is below 80%-->
+                                <span class="badge text-bg-danger"><strong>At Risk: </strong>Attendance below 80%</span><!--threshold badge for attendance below 80%-->
+                        {% else %}
+                                <span class="badge text-bg-success"><strong>Good Standing: </strong>Attendance above 80%</span><!--threshold badge for attendance above 80%-->
+                        {% endif %}
+                    {% else %}
+                        <p><strong>ATTENDANCE:</strong></p>
+                        <span class="text-muted">No attendance records</span> <!--shows no record whenno attendance is logged-->
+                    {% endif %}
 
+                    {% if student.is_sen %}
+                    <p><strong>SEN STUDENT</strong></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!--Grades section-->
+    
+    <div class="grades-section">
+        <h5>GRADES</h5>
+
+        <div class="grades-table">
             {% if grades %}
-                {% for g in grades %}
-                    <div class="border rounded p-2 mb-2">
-                        {{g.assessment_name}} - {{g.percentage}}% - ({{g.letter_grade}})                    </div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Assessment</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Date</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for g in grades %}
+                    <tr>
+                        <td>{{ g.subject_name }}</td>
+                        <td>{{ g.assessment_name }}</td>
+                        <td>{{ g.student_score }} / {{g.max_score}}</td>
+                        <td>{{g.percentage}}</td>
+                        <td>{{g.letter_grade}}</td>
+                        <td>{{g.date.strftime('%d/%m/%Y')}}</td>
+                        <td>{{g.feedback or '-'}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+
+        <h6>RUNNING AVERAGES</h6>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Average</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for subject, average in subject_averages.items()%}
+                <tr>
+                    <td>{{subject}}</td>
+                    <td>{{average}}%</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">No grades recorded</p>
+        {% endif %}
+        </div>
+    </div>
+
+    <!--Behaviour section-->
+    <div class="card">
+        <div class="card-body">
+            <h4>BEHAVIOUR LOG</h4>
+
+            {% if behaviour %}
+                {% for b in behaviour %}
+                <p>
+                    [{{b.timestamp.strftime('%d/%m/%Y')}}]  -
+                    [{{b.behaviour_type}}]  -
+                    [{{b.points}} points]   -
+                    [{{b.description}}]
+                </p>
                 {% endfor %}
             {% else %}
-                <p>No grades recorded...........</p>
+                <p>No behaviour records......</p>
             {% endif %}
         </div>
     </div>
 
-</div>
+    <!--Teacher notes section-->
+    <div class="card">
+        <div class="card-body">
+            <h4>TEACHER NOTES</h4>
 
-<!--Behaviour section-->
-<div class="card">
-    <div class="card-body">
-        <h4>BEHAVIOUR LOG</h4>
-
-        {% if behaviour %}
-            {% for b in behaviour %}
-            <p>
-                [{{b.timestamp.strftime('%d/%m/%Y')}}]  -
-                [{{b.behaviour_type}}]  -
-                [{{b.points}} points]   -
-                [{{b.description}}]
-            </p>
-            {% endfor %}
-        {% else %}
-            <p>No behaviour records......</p>
-        {% endif %}
-    </div>
-</div>
-
-<!--Teacher notes section-->
-<div class="card">
-    <div class="card-body">
-        <h4>TEACHER NOTES</h4>
-
-        {% if notes %}
-            {% for n in notes %}
-            <p>
-                [{{n.timestamp.strftime('%d/%m/%Y')}}] -
-                [{{n.content}}]
-            </p>
-            {% endfor %}
-        {% else %}
-            <p>No teacher notes records................</p>
-        {% endif %}
+            {% if notes %}
+                {% for n in notes %}
+                <p>
+                    [{{n.timestamp.strftime('%d/%m/%Y')}}] -
+                    [{{n.content}}]
+                </p>
+                {% endfor %}
+            {% else %}
+                <p>No teacher notes records................</p>
+            {% endif %}
+        </div>
     </div>
 </div>
 

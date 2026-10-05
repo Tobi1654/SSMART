@@ -20,49 +20,49 @@
 
         {% if classes %}
             <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Class</th>
-                    <th>Year Group</th>
-                    <th>Students</th>
-                    <th>Attendance</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Year Group</th>
+                        <th>Students</th>
+                        <th>Attendance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-            <tbody>
-                {% for c in classes %}
-                <tr>
-                    <td>{{ c.class_name }}</td>
-                    <td>{{ c.year_group }}</td>
-                    <td>{{ c.student_count  if c.student_count else '-'}}</td>
-                    <td>
-                        {% set avg  = c.average_attendance %}
-                        {% if avg > 0 %}
-                            {{avg}}%
-                        {%else%}
-                            <p class="text-muted">---</p>
-                        {% endif %}
+                <tbody>
+                    {% for c in classes %}
+                    <tr>
+                        <td>{{ c.class_name }}</td>
+                        <td>{{ c.year_group }}</td>
+                        <td>{{ c.student_count  if c.student_count else '-'}}</td>
+                        <td>
+                            {% set avg  = c.average_attendance %}
+                            {% if avg > 0 %}
+                                {{avg}}%
+                            {%else%}
+                                <p class="text-muted">---</p>
+                            {% endif %}
+                            </td>
+                        <td>
+                            <a href="{{url_for('teacher.attendance', class_id=c.class_id)}}" class="btn-primary">Mark Attendance</a>
+
+                            {% set teacher_subjects = teacher.subjects.split(',') if teacher.subjects else[] %}
+
+                            {% if teacher_subjects %}
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Enter Grades</button>
+                                    <ul class="dropdown-menu dropdown-menu-dark">
+                                        {% for subject in teacher_subjects %}
+                                            <li><a class="dropdown-item active" href="{{url_for('teacher.enter_grades', class_id=c.class_id, subject=subject.strip())}}">{{subject.strip()}}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {%endif%}
                         </td>
-                    <td>
-                        <a href="{{url_for('teacher.attendance', class_id=c.class_id)}}" class="btn-primary">Mark Attendance</a>
-
-                        {% set teacher_subjects = teacher.subjects.split(',') if teacher.subjects else[] %}
-
-                        {% if teacher_subjects %}
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Enter Grades</button>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    {% for subject in teacher_subjects %}
-                                        <li><a class="dropdown-item active" href="{{url_for('teacher.enter_grades', class_id=c.class_id, subject=subject.strip())}}">{{subject.strip()}}</a></li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        {%endif%}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                    </tr>
+                    {% endfor %}
+                </tbody>
         </table>
         {% else %}
             <p class="text-muted">You have no classes assigned.......</p>

@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import User, Teacher, Class, Student, Grade, Behaviour, TeacherNote
+from app.models import User, Teacher, Class, Student, Grade, Behaviour, TeacherNote, Subject
 from app.utils import admin_required
 from datetime import datetime
 import secrets
@@ -280,17 +280,46 @@ def student_profile(student_id):
     user = User.query.get(student.user_id)
     student_class = Class.query.get(student.class_id)
 
-    grades = Grade.query.filter_by(student_id=student_id).all()
+    #this gets the grades recorded for the students with their subject name
+    get_the_grades = Grade.query.filter_by(student_id=student_id).order_by(Grade.date.desc()).all()
+
+    grades = []
+    for g in get_the_grades:
+        subject = Subject.query.get(g.subject_id)
+        grades.append({
+            'subject_name': subject.subject_name if subject else '-',
+            'assessment_name': g.assessment_name,
+            'student_score': g.student_score,
+            'max_score': g.max_score,
+            'percentage': g.percentage,
+            'letter_grade': g.letter_grade,
+            'date': g.date,
+            'feedback': g.feedback
+        })
+
+    subject_averages = {}
+    for g in get_the_grades:
+        subject = Subject.query.get(g.subject_id)
+        subject_name = subject.subject_name if subject else '-'
+
+        if subject_name not in subject_averages:
+            subject_averages[subject_name] = []
+        subject_averages[subject_name].append(g.percentage)
+
+    subject_averages = {name: round(sum(percentages)/len(percentages), 2) 
+                        for name, percentages in subject_averages.items() }
+
     behaviour = Behaviour.query.filter_by(student_id=student_id).all()
-    notes = TeacherNote.query.filter_by(student_id=student_id).all()
+    teacher_notes = TeacherNote.query.filter_by(student_id=student_id).all()
 
-
-    return render_template('student_profile.html', 
-                            student=student, 
-                            user=user, 
-                            student_class=student_class, 
-                            grades=grades, 
-                            behaviour=behaviour, 
-                            notes=notes
+    return render_template(
+        'student_profile.html',
+        student = student,
+        user = user,
+        student_class=student_class,
+        grades=grades,
+        subject_averages = subject_averages,
+        behaviour = behaviour,
+        teacher_notes=teacher_notes
     )
 
