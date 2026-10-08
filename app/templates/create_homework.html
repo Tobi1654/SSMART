@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Student Profile{% endblock %}
+{% block title %}Create Homework{% endblock %}
 
 {% block content %}
 
@@ -23,14 +23,14 @@
             >
 
             <label for="description" class="form-label">Description: </label>
-            <input type="textarea"
+            <textarea type="textarea"
                     class="form-control"
                     id="description"
                     name="description"
                     placeholder="Description"
-            >
+            ></textarea>
 
-            <label for="class_id" class="form-label">Class</label>
+            <label for="class_id" class="form-label">Subject</label>
             <select class="form-select" id="class_id" name="class_id">
                 <option value="" selected disabled>--- Select a Class---</option>
                 {% for c in classes %} <!--use cls for class because of class is a reversed keyword in jinja-->
@@ -41,7 +41,7 @@
             <label for="subject" class="form-label">Class</label>
             <select class="form-select" id="subject" name="subject">
                 <option value="" selected disabled>--- Select a Subject---</option>
-                {% for subject in subjects_list %} <!--use cls for class because of class is a reversed keyword in jinja-->
+                {% for subject in subject_list %} <!--use cls for class because of class is a reversed keyword in jinja-->
                 <option value="{{subject}}">{{subject}}</option>
                 {% endfor %}
             </select>

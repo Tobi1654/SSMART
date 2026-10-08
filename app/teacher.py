@@ -229,7 +229,7 @@ def create_homework():
             return redirect(url_for('teacher.create_homework'))
 
         try:
-            deadline_date = dt.strptime(deadline, '%y-%m-%d').date()
+            deadline_date = dt.strptime(deadline, '%Y-%m-%d').date()
         except ValueError:
             flash('Invalid deadline', category='error')
             return redirect(url_for('teacher.create_homework'))
@@ -240,7 +240,7 @@ def create_homework():
 
 
         classroom = Class.query.get(class_id)
-        if classroom or not classroom.teacher_id != current_teacher.teacher_id:
+        if not classroom or classroom.teacher_id != current_teacher.teacher_id:
             flash('You can only set homework for your own class', category='error')
             return redirect(url_for('teacher.dashboard')) 
 
@@ -255,8 +255,8 @@ def create_homework():
             subject_id=subject_obj.subject_id,
             title = title,
             description = description if description else None,
-            deadline = deadline.date(),
-            notification = False,
+            deadline = deadline_date,
+            notification_sent = False,
             status = 'pending'
         )
         db.session.add(homework)
