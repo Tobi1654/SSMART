@@ -226,17 +226,17 @@ def create_homework():
 
         if not title or not class_id or not subject or not deadline:
             flash('All fields are required', category='error')
-            return redirect(url_for('teacher.create_homework')
+            return redirect(url_for('teacher.create_homework'))
 
         try:
             deadline_date = dt.strptime(deadline, '%y-%m-%d').date()
         except ValueError:
             flash('Invalid deadline', category='error')
-            return redirect(url_for('teacher.create_homework')
+            return redirect(url_for('teacher.create_homework'))
 
         if deadline <= date.today():
             flash('The deadline must be in the future!')
-            return redirect(url_for('teacher.create_homework')
+            return redirect(url_for('teacher.create_homework'))
 
 
         classroom = Class.query.get(class_id)
@@ -255,7 +255,7 @@ def create_homework():
             subject_id=subject_obj.subject_id,
             title = title,
             description = description if description else None,
-            deadline = deadline.date,
+            deadline = deadline.date(),
             notification = False,
             status = 'pending'
         )
@@ -264,3 +264,42 @@ def create_homework():
 
         flash(f'Homework: {title} created successfully', category='success')
         return redirect(url_for('teacher.homework_list'))
+
+    assigned_classes = Class.query.filter_by(teacher_id=current_teacher.teacher_id).all()
+    subject_list = [s.strip() for s in (current_teacher.subjects or '').split(',') if s.strip()]
+
+    return render_template(
+    'create_homework.html',
+    classes = assigned_classes,
+    subject_list  = subject_list,
+    today = date.today()
+    )
+
+@teacher.route('/teacher/homework', methods = ['GET', 'POST'])
+@teacher_required
+def homework_list():
+    current_teacher = get_current_teacher
+    assigned_classes  = Class.query.filter_by(teacher_id=current_teacher.teacher_id).all()
+
+    class_ids = [c.class_id for c in assigned_classes]
+    homeworks = Homework.query.filter_by(Homework.class_id.in_(class_ids).order_by(Homework.deadline)).all()
+
+    homework_data = []
+    for hw in homeworks:
+        classroom = Class.query.get(hw.class_id)
+        subject  = Subject.query.get(hw.subject_id)
+        days_left = ((hw.deadline) - (date.today())).day
+
+        homework_data.append({
+            'homework_id': hw.homework_id,
+            'title': hw.title,
+            'class_name': classroom.class_name if classroom else '-',
+            'subject_name': subject.subject_name if subject else '-',
+            'deadline': hw.deadline,
+            'days_left': days_left
+        })
+
+        return render_template(
+            'homework_list.html',
+            homeworks = homework_data
+        )
