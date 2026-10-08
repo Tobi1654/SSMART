@@ -299,7 +299,7 @@ def homework_list():
             'days_left': days_left
         })
 
-        return render_template(
-            'homework_list.html',
-            homeworks = homework_data
-        )
+    return render_template(
+        'homework_list.html',
+        homeworks = homework_data
+    )
