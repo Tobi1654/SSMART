@@ -234,7 +234,7 @@ def create_homework():
             flash('Invalid deadline', category='error')
             return redirect(url_for('teacher.create_homework'))
 
-        if deadline <= date.today():
+        if deadline_date <= date.today():
             flash('The deadline must be in the future!')
             return redirect(url_for('teacher.create_homework'))
 
@@ -259,7 +259,7 @@ def create_homework():
             notification = False,
             status = 'pending'
         )
-        db.session.add(Homework)
+        db.session.add(homework)
         db.session.commit()
 
         flash(f'Homework: {title} created successfully', category='success')
