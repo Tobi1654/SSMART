@@ -38,9 +38,9 @@
                         <td>
                             {% if hw.days_left >= 3 %}
                             <span class="badge text-bg-success">{{hw.days_left}} days remaining</span>
-                            {% elif hw.days_left >=1 %}
+                            {% elif hw.days_left >1 %}
                             <span class="badge text-bg-warning">{{hw.days_left}} days remaining</span>
-                            {% elif hw.days_left == 0 %}
+                            {% elif hw.days_left <= 1 %}
                             <span class="badge text-bg-danger">Due Today</span>
                             {% else %}
                             <span class="badge text-bg-secondary">Overdue</span>
