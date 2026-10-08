@@ -34,7 +34,7 @@
             <select class="form-select" id="class_id" name="class_id">
                 <option value="" selected disabled>--- Select a Class---</option>
                 {% for c in classes %} <!--use cls for class because of class is a reversed keyword in jinja-->
-                <option value="{{cls.class_id}}">{{ c.class_name }} (Year {{c.year_group}})</option>
+                <option value="{{c.class_id}}">{{ c.class_name }} (Year {{c.year_group}})</option>
                 {% endfor %}
             </select>
 
@@ -51,7 +51,7 @@
                     id="deadline"
                     name="deadline"
                     class="form-control"
-                    min = {{today.strftime(%Y-%m-%d)}}
+                    min = "{{today.strftime('%Y-%m-%d')}}"
                     required
             >
 
