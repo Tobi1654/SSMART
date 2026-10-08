@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Student Profile{% endblock %}
+
+{% block content %}
+
+<div class="create-homework-page">
+    <div class="header">
+        <h2><strong>CREATE HOMEWORK</strong></h2>
+        <small class="text-muted"></small>
+    </div>
+
+    <form method="POST">
+
+        <div class="homework-info">
+
+            <label for="title" class="form-label">Title:</label>
+            <input type="text"
+                    class="form-control"
+                    id="title"
+                    name="title"
+                    placeholder="Title"
+                    required
+            >
+
+            <label for="description" class="form-label">Description: </label>
+            <input type="textarea"
+                    class="form-control"
+                    id="description"
+                    name="description"
+                    placeholder="Description"
+            >
+
+            <label for="class_id" class="form-label">Class</label>
+            <select class="form-select" id="class_id" name="class_id">
+                <option value="" selected disabled>--- Select a Class---</option>
+                {% for c in classes %} <!--use cls for class because of class is a reversed keyword in jinja-->
+                <option value="{{cls.class_id}}">{{ c.class_name }} (Year {{c.year_group}})</option>
+                {% endfor %}
+            </select>
+
+            <label for="subject" class="form-label">Class</label>
+            <select class="form-select" id="subject" name="subject">
+                <option value="" selected disabled>--- Select a Subject---</option>
+                {% for subject in subjects_list %} <!--use cls for class because of class is a reversed keyword in jinja-->
+                <option value="{{subject}}">{{subject}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="deadline" class="form-label">Deadline:</label>
+            <input type="date"
+                    id="deadline"
+                    name="deadline"
+                    class="form-control"
+                    min = {{today.strftime(%Y-%m-%d)}}
+                    required
+            >
+
+        </div>
+
+        <div class="set-homework">
+            <button type="submit" class="btn btn-primary">Set Homework</button>
+            <a href="{{url_for('teacher.dashboard')}}" class="btn btn-secondary">Cancel</a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
