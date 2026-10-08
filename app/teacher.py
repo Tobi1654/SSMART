@@ -282,7 +282,7 @@ def homework_list():
     assigned_classes  = Class.query.filter_by(teacher_id=current_teacher.teacher_id).all()
 
     class_ids = [c.class_id for c in assigned_classes]
-    homeworks = Homework.query.filter_by(Homework.class_id.in_(class_ids).order_by(Homework.deadline)).all()
+    homeworks = Homework.query.filter(Homework.class_id.in_(class_ids)).order_by(Homework.deadline).all()
 
     homework_data = []
     for hw in homeworks:
