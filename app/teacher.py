@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import Teacher, Class, Student, Attendance, Subject, Grade
+from app.models import Teacher, Class, Student, Attendance, Subject, Grade, Homework
 from app.utils import teacher_required
 from flask_login import current_user
 from datetime import date
@@ -212,3 +212,55 @@ def enter_grades(class_id, subject):
         subjects_list = subject_list
     )
 
+@teacher.route('/teacher/homework/create', methods = ['GET','POST'])
+@teacher_required
+def create_homework():
+    current_teacher = get_current_teacher()
+
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        class_id = request.form.get('class_id')
+        subject = request.form.get('subject', '').strip()
+        deadline = request.form.get('deadline')
+
+        if not title or not class_id or not subject or not deadline:
+            flash('All fields are required', category='error')
+            return redirect(url_for('teacher.create_homework')
+
+        try:
+            deadline_date = dt.strptime(deadline, '%y-%m-%d').date()
+        except ValueError:
+            flash('Invalid deadline', category='error')
+            return redirect(url_for('teacher.create_homework')
+
+        if deadline <= date.today():
+            flash('The deadline must be in the future!')
+            return redirect(url_for('teacher.create_homework')
+
+
+        classroom = Class.query.get(class_id)
+        if classroom or not classroom.teacher_id != current_teacher.teacher_id:
+            flash('You can only set homework for your own class', category='error')
+            return redirect(url_for('teacher.dashboard')) 
+
+        subject_obj = Subject.query.filter_by(subject_name=subject).first()
+        if not subject_obj:
+            subject_obj = Subject(subject_name=subject)
+            db.session.add(subject_obj)
+            db.session.commit()
+
+        homework = Homework(
+            class_id = int(class_id),
+            subject_id=subject_obj.subject_id,
+            title = title,
+            description = description if description else None,
+            deadline = deadline.date,
+            notification = False,
+            status = 'pending'
+        )
+        db.session.add(Homework)
+        db.session.commit()
+
+        flash(f'Homework: {title} created successfully', category='success')
+        return redirect(url_for('teacher.homework_list', class_id=class_id, subject=subject))
