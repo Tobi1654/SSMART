@@ -263,4 +263,4 @@ def create_homework():
         db.session.commit()
 
         flash(f'Homework: {title} created successfully', category='success')
-        return redirect(url_for('teacher.homework_list', class_id=class_id, subject=subject))
+        return redirect(url_for('teacher.homework_list'))
