@@ -278,7 +278,7 @@ def create_homework():
 @teacher.route('/teacher/homework', methods = ['GET', 'POST'])
 @teacher_required
 def homework_list():
-    current_teacher = get_current_teacher
+    current_teacher = get_current_teacher()
     assigned_classes  = Class.query.filter_by(teacher_id=current_teacher.teacher_id).all()
 
     class_ids = [c.class_id for c in assigned_classes]
