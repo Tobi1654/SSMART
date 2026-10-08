@@ -288,7 +288,7 @@ def homework_list():
     for hw in homeworks:
         classroom = Class.query.get(hw.class_id)
         subject  = Subject.query.get(hw.subject_id)
-        days_left = ((hw.deadline) - (date.today())).day
+        days_left = ((hw.deadline) - (date.today())).days
 
         homework_data.append({
             'homework_id': hw.homework_id,
@@ -301,5 +301,6 @@ def homework_list():
 
     return render_template(
         'homework_list.html',
-        homeworks = homework_data
+        homeworks = homework_data,
+        teacher = current_teacher
     )
