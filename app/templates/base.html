@@ -36,7 +36,7 @@
                 <a class="nav-item nav-link" href="{{ url_for('teacher.dashboard') }}">Teacher Dashboard</a>
 
                 {% elif current_user.role == 'student' %}
-                <a class="nav-item nav-link" href="{{ url_for('auth.student_dashboard') }}">My Dashboard</a>
+                <a class="nav-item nav-link" href="{{ url_for('student.dashboard') }}">My Dashboard</a>
                 {% endif %}
 
                 <a class="nav-item nav-link" id="logout" href="{{ url_for('auth.logout') }}">Logout</a>
