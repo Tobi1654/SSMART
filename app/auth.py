@@ -42,7 +42,7 @@ def login():
         login_user(user)
 
         if user.role == 'student':
-            return redirect(url_for('auth.student_dashboard'))
+            return redirect(url_for('student.dashboard'))
         elif user.role == 'teacher':
             return redirect(url_for('teacher.dashboard'))
         elif user.role == 'admin':
