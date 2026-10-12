@@ -20,8 +20,10 @@ def dashboard():
         flash('You account is not logged to a student record', category='error')
         return redirect(url_for('auth.login'))
 
+    #gets the attendance from the student record
     attendance_percentage = current_student.attendance_percentage or 0
 
+    #gets all recorded grades and arranges them from the newest to oldest
     raw_grades = Grade.query.filter_by(student_id=student.student_id).order_by(Grade.date.desc()).all()
 
     grades = []
@@ -36,14 +38,27 @@ def dashboard():
             'date': g.date,
         })
 
-    subject_averages = {}
+#this gets the average percentage for each subject
+    subject_totals = {}
+    subject_counts = {}
+
     for g in raw_grades:
         subject  = Subject.query.get(g.subject_id)
         name = subject.subject_name if subject else '-'
-        if name not in subject_averages:
-            subject_averages[name] = []
-        subject_averages[name].append(g.percentage)
 
+        if name not in subject_totals:
+            subject_totals[name] = 0
+            subject_counts[name] = 0
+
+        subject_totals[name] = subject_totals[name] + g.percentage
+        subject_counts[name] = subject_counts[name] + 1
+
+        subject_averages = {}
+        for name in subject_totals:
+            average = subject_totals[name] / subject_counts[name]
+            subject_averages[name] =round(average,2)
+
+    #gets the homeworks and orders them by their deadline
     homeworks = Homework.query.filter_by(class_id=current_student.class_id).order_by(Homework.deadline).all()
     
     homework_data = []
@@ -59,7 +74,7 @@ def dashboard():
             'days_left': days_left
         })
 
-
+    #gets the notifications and limits them to 3 so it is not every where
     notifications = Notification.query.filter_by(user=current_user.user_id).order_by(Notification.created_at.desc()).limit(3).all()
 
     return render_template(
