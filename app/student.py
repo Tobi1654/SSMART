@@ -22,5 +22,16 @@ def dashboard():
 
     attendance_percentage = current_student.attendance_percentage or 0
 
-    
+    raw_grades = Grade.query.filter_by(student_id=student.student_id).order_by(Grade.date.desc()).all()
 
+    grades = []
+    for g in raw_grades:
+        subject  = Subject.query.get(g.subject_id)
+
+        grades.append({
+            'subject_name': subject.subject_name if subject else '-',
+            'assessment_name': g.assessment_name,
+            'percentage': g.percentage,
+            'letter_grade': g.letter_grade,
+            'date': g.date,
+        })
