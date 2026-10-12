@@ -50,10 +50,10 @@ def login():
 
     return render_template("login.html")
 
-@auth.route('/student_dashboard')
-@login_required
-def student_dashboard():
-    return 'Student Dashboard'
+#@auth.route('/student_dashboard')
+#@login_required
+#def student_dashboard():
+#    return 'Student Dashboard'
 
 #@auth.route('/teacher_dashboard')
 #@login_required
