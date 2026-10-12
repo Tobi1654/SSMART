@@ -35,3 +35,26 @@ def dashboard():
             'letter_grade': g.letter_grade,
             'date': g.date,
         })
+
+    subject_averages = {}
+    for g in raw_grades:
+        subject  = Subject.query.get(g.subject_id)
+        name = subject.subject_name if subject else '-'
+        if name not in subject_averages:
+            subject_averages[name] = []
+        subject_averages[name].append(g.percentage)
+
+    homeworks = Homework.query.filter_by(class_id=current_student.class_id).order_by(Homework.deadline).all()
+    
+    homework_data = []
+    for hw in homeworks:
+        subject  = Subject.query.get(hw.subject_id)
+        days_left = ((hw.deadline) - (date.today())).days
+        
+        homework_data.append({
+            'title': hw.title,
+            'description': hw.description,
+            'subject_name': subject.subject_name if subject else '-',
+            'deadline': hw.deadline,
+            'days_left': days_left
+        })
