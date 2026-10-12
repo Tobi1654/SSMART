@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import Student, Class, Student, Attendance, Subject, Grade, Homework
+from app.models import Student, Class, Student, Attendance, Subject, Grade, Homework, Notification
 from app.utils import student_required
 from flask_login import current_user
 from datetime import date
@@ -58,3 +58,17 @@ def dashboard():
             'deadline': hw.deadline,
             'days_left': days_left
         })
+
+
+    notifications = Notification.query.filter_by(user=current_user.user_id).order_by(Notification.created_at.desc()).limit(3).all()
+
+    return render_template(
+        'student_dashboard.html',
+        student = current_student,
+        attendance_percentage = attendance_percentage,
+        grades = grades,
+        subject_averages = subject_averages,
+        homeworks = homework_data,
+        notifications = notifications,
+        today = date.today()
+    )
