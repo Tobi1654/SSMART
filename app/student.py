@@ -24,7 +24,7 @@ def dashboard():
     attendance_percentage = current_student.attendance_percentage or 0
 
     #gets all recorded grades and arranges them from the newest to oldest
-    raw_grades = Grade.query.filter_by(student_id=student.student_id).order_by(Grade.date.desc()).all()
+    raw_grades = Grade.query.filter_by(student_id=current_student.student_id).order_by(Grade.date.desc()).all()
 
     grades = []
     for g in raw_grades:
@@ -75,7 +75,7 @@ def dashboard():
         })
 
     #gets the notifications and limits them to 3 so it is not every where
-    notifications = Notification.query.filter_by(user=current_user.user_id).order_by(Notification.created_at.desc()).limit(3).all()
+    notifications = Notification.query.filter_by(user_id=current_user.user_id).order_by(Notification.created_at.desc()).limit(3).all()
 
     return render_template(
         'student_dashboard.html',

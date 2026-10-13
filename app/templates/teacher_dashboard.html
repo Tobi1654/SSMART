@@ -10,7 +10,7 @@
     <h2><strong>WELCOME, {{teacher.full_name}}</strong></h2>
     <small class="text-muted">{{teacher.department}} Department</small>
     <small class="text-muted">You are logged in as a Teacher</small>
-    <small class="text-muted">{{today_date}}</small>
+    <small class="text-muted">{{today.strftime('%d/%m/%Y')}}</small>
 </div>
 
 <div class="classes-table">

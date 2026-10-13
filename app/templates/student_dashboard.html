@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="student-dashbaord">
+
+    <div class="header">
+        <h1><strong>WELCOME BACK, {{student.full_name}}</strong></h1>
+        <small class="text-muted">{{today.strftime('%d/%m/%Y')}}</small>
+    </div>
+
+    <div class="attendance-section">
+        <h3><strong>MY ATTENDANCE</strong></h3>
+        <div class="attendance-widget">
+            {% if attendance_percentage > 0 %}
+            <h1>{{attendance_percentage}}%</h1>
+            <div class="att-flag">
+                {% if attendance_percentage < 80 %}
+                    <span class="badge text-bg-danger"><strong>At Risk: </strong>Attendance below 80%</span><!--threshold badge for attendance below 80%-->
+                {% else %}
+                    <span class="badge text-bg-success"><strong>Good Standing: </strong>Attendance above 80%</span><!--threshold badge for attendance above 80%-->
+                {% endif %}
+            {% else %}
+                <p><strong>ATTENDANCE:</strong></p>
+                <span class="text-muted">No attendance records</span> <!--shows no record whenno attendance is logged-->
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="notifications-section">
+        <h3><strong>NOTIFICATIONS</strong></h3>
+
+        {% if notifications %}
+            {% for n in notifications %}
+            <div>
+                <strong>{{n.title}}</strong>
+                {{n.message}}
+            </div>
+            {%endfor%}
+        {%  else%}
+            <p class="text-muted">No notification yet</p>
+        {% endif %}
+    </div>
+
+    <div class="homework-section">
+        <h3><strong>HOMEWORKS & DEADLINES</strong></h3>
+
+        {%  if homeworks %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Title</th>
+                        <th>Deadline</th>
+                        <th>Days Left</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for hw in homeworks %}
+                    <tr>
+                        <td>{{ hw.subject_name }}</td>
+                        <td>{{ hw.title }}</td>
+                        <td>{{hw.deadline.strftime('%d/%m/%Y')}}</td>
+                        <td>
+                            {% if hw.days_left >= 3 %}
+                            <span class="badge text-bg-success">{{hw.days_left}} days remaining</span>
+                            {% elif hw.days_left >1 %}
+                            <span class="badge text-bg-warning">{{hw.days_left}} days remaining</span>
+                            {% elif hw.days_left == 1 %}
+                            <span class="badge text-bg-danger">Due Today</span>
+                            {% else %}
+                            <span class="badge text-bg-secondary">Overdue</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">You haven't created any homework</p>
+        {% endif %}
+    </div>
+
+    <div class="grades-section">
+        <h3><strong>MY GRADES</strong></h3>
+
+        <div class="grades-table">
+            {% if grades %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Assessment</th>
+                        <th>Percentage</th>
+                        <th>Grade</th>
+                        <th>Date</th>
+                        <th>Feedback</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for g in grades %}
+                    <tr>
+                        <td>{{ g.subject_name }}</td>
+                        <td>{{ g.assessment_name }}</td>
+                        <td>{{g.percentage}}</td>
+                        <td><strong>{{g.letter_grade}}</strong></td>
+                        <td>{{g.date.strftime('%d/%m/%Y')}}</td>
+                        <td>{{g.feedback or '-'}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+        </table>
+
+        <h3>RUNNING AVERAGES</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Average</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for subject, average in subject_averages.items()%}
+                <tr>
+                    <td>{{subject}}</td>
+                    <td>{{average}}%</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+        {% else %}
+            <p class="text-muted">No grades recorded yet.</p>
+        {% endif %}
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
