@@ -5,6 +5,9 @@ from app.utils import admin_required
 from datetime import datetime
 import secrets
 import string
+from io import BytesIO
+from flask import send_file
+from app.reports import generate_report
 
 admin = Blueprint('admin', __name__)
 
@@ -323,3 +326,20 @@ def student_profile(student_id):
         teacher_notes=teacher_notes
     )
 
+@admin.route('/admin/report/<int:student_id>')
+@admin_required
+def download_student_report(student_id):
+    student = Student.query.get_or_404(student_id)
+
+    pdf_bytes = generate_report(student_id)
+
+    if not pdf_bytes:
+        flash('Could not generate report', category='error')
+        return redirect(url_for('admin.student_profile', student_id=student_id))
+
+    return send_file(
+        BytesIO(pdf_bytes),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'Report_{student.full_name.replace(" ","_")}.pdf'
+    )
