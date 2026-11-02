@@ -15,7 +15,7 @@
         <div class="student-info">
             <div class="card-body">
                 <div class="student-image">
-                    <img src="..." class="rounded mx-auto d-block" alt="...">
+                    <img src="..." class="rounded mx-auto d-block" alt="student-image">
                 </div>
 
                 <div class="student_details">
@@ -33,11 +33,11 @@
                         {% endif %}
                     {% else %}
                         <p><strong>ATTENDANCE:</strong></p>
-                        <span class="text-muted">No attendance records</span> <!--shows no record whenno attendance is logged-->
+                        <span class="text-muted">No attendance records</span> <!--shows no record when no attendance is logged-->
                     {% endif %}
 
                     {% if student.is_sen %}
-                    <p><strong>SEN STUDENT</strong></p>
+                    <span class="badge text-bg-warning"><strong>SEN</strong></span>
                     {% endif %}
                 </div>
             </div>

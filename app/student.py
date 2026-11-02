@@ -1,9 +1,11 @@
-from flask import Blueprint, url_for, request, flash, render_template, redirect
+from flask import Blueprint, url_for, request, flash, render_template, redirect, send_file
 from app.extensions import db
 from app.models import Student, Class, Student, Attendance, Subject, Grade, Homework, Notification
 from app.utils import student_required
 from flask_login import current_user
-from datetime import date
+from datetime import  date
+from io import BytesIO
+from app.reports import generate_report
 
 student = Blueprint('student', __name__)
 
@@ -86,4 +88,27 @@ def dashboard():
         homeworks = homework_data,
         notifications = notifications,
         today = date.today()
+    )
+
+
+@student.route('/student/report/<int:student_id>')
+@student_required
+def download_report(student_id):
+    current_student = get_current_student()
+
+    if not current_student or current_student.student_id != student_id:
+        flash('You can only download your own report', category='error')
+        return redirect(url_for('student.dashboard'))
+
+    pdf_bytes = generate_report(student_id)
+
+    if not pdf_bytes:
+        flash('report could not be generated', category='error')
+        return redirect(url_for('student.dashboard'))
+
+    return send_file(
+        BytesIO(pdf_bytes),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'Report_{current_student.full_name.replace(" ", "_")}.pdf'
     )

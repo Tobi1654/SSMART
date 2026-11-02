@@ -28,7 +28,8 @@ def dashboard():
     return render_template(
         'teacher_dashboard.html',
         teacher = current_teacher,
-        classes = assigned_class
+        classes = assigned_class,
+        today = date.today()
     )
 
 #routes the teacher to where they take the attendance

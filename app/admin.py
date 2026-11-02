@@ -41,12 +41,12 @@ def add_user():
             flash('Valid email is required', category='error')
             return redirect(url_for('admin.add_user'))
 
-        #checks if the email they are creatring already exists
+        #checks if the email they are creating already exists
         if User.query.filter_by(email=email).first():
             flash('An account with this email already exist', category='error')
             return redirect(url_for('admin.add_user'))
 
-        #validates the fields thgat are required fo rthe students
+        #validates the fields that are required fo the students
         if role == 'student':
             if not dob or not class_id:
                 flash('Date of birth and class are required for students', category='error')
@@ -56,12 +56,12 @@ def add_user():
                 flash('Selected class does not exist', category='error')
                 return redirect(url_for('admin.add_user'))
 
-        #this is what defines the students email foirm theire email
+        #this is what defines the users username form their email
         base_username = email.split('@')[0]
         username = base_username
         counter = 1
 
-        #if a student has the same name, this would increment a number to the4ir name so they have different usernmaes
+        #if a user has the same name, this would increment a number to the4ir name so they have different usernames
         while User.query.filter_by(username=username).first():
             username = f'{base_username}{counter}'
             counter += 1
@@ -117,12 +117,12 @@ def add_class():
         year_group = request.form.get('year_group')
         teacher_id = request.form.get('teacher_id')
 
-        #validatres that there is a class name and year group
+        #validates that there is a class name and year group
         if not class_name or not year_group:
             flash('Class name and year group are required', category='error')
             return redirect(url_for('admin.add_class'))
 
-        #checks if the class teh admin is creating is already in the databse, to avoid duplicates
+        #checks if the class teh admin is creating is already in the database, to avoid duplicates
         if Class.query.filter_by(class_name=class_name).first():
             flash('This class name already exists', category='error')
             return redirect(url_for('admin.add_class'))
@@ -202,7 +202,7 @@ def students():
         year_filter  =year_filter
     )
 
-#routes to the page where the admin can edit the student onformation
+#routes to the page where the admin can edit the student information
 @admin.route('/admin/edit_student/<int:student_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_student(student_id):
@@ -225,13 +225,13 @@ def edit_student(student_id):
             flash('Valid email is required', category='error')
             return redirect(url_for('admin.edit_student', student_id=student_id))
 
-        #chacks if the user's email already exists so that no one has the same emails
+        #checks if the user's email already exists so that no one has the same emails
         existing = User.query.filter_by(email=email).first()
         if existing and  existing.user_id != user.user_id:
             flash('This email already exists by another account', category='error')
             return redirect(url_for('admin.edit_student', student_id=student_id))
 
-        # checks that the admin selected a clas that already exists
+        # checks that the admin selected a class that already exists
         if not Class.query.get(class_id):
             flash('The class you selected does not exists', category='error')
             return redirect(url_for('admin.edit_student', student_id=student_id))
@@ -255,7 +255,7 @@ def edit_student(student_id):
     classes = Class.query.all()
     return render_template('edit_student.html', student=student, user=user, classes=classes)
 
-# This outes the admin when they want to delete the student from the databse
+# This routes the admin when they want to delete the student from the database
 @admin.route('/admin/delete_student/<int:student_id>', methods=['POST', 'GET'])
 @admin_required
 def delete_student(student_id):

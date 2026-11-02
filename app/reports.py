@@ -2,7 +2,7 @@ from io import BytesIO
 from datetime import date
 
 from reportlab.lib.pagesizes import A4
-from reportlab.lib import colours
+from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import cm
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
@@ -73,13 +73,13 @@ def generate_report(student_id): #This gets the student id and looks them up in 
         'Heading',
         parent = styles['Heading1'],
         alignment=1,
-        textColor=colours.blue,
+        textColor=colors.blue,
     )
 
     subheading = ParagraphStyle(
         'SubHeading',
         parent=styles['Heading2'],
-        textColor=colours.lightblue,
+        textColor=colors.lightblue,
         spaceAfter=4
     )
 
@@ -97,17 +97,70 @@ def generate_report(student_id): #This gets the student id and looks them up in 
         ['Class: ', f'{student_class.class_name} (Year{student_class.year_group})' if student_class else '-'],
         ['Date of Birth: ', student.dob.strftime('%d/%m/%Y') if student.dob else '-'],
         ['Attendance: ', f'{att_percentage}%'],
-        ['Report date: ' date.today().strftime('%d/%m/%Y')],
+        ['Report date: ', date.today().strftime('%d/%m/%Y')],
     ]
 
 #table styling
     info_table = Table(info_data, colWidths=[4*cm, 12*cm])
     info_table.setStyle(TableStyle([
-        ('FONTNAME', (0,0), (0,-1), 'Courier')
-        ('FONTSIZE', (0,0), (-1,-1), 10)
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4)
-        ('TOPPADDING', (0,0), (-1,-1), 4)
+        ('FONTNAME', (0,0), (0,-1), 'Courier'),
+        ('FONTSIZE', (0,0), (-1,-1), 10),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('TOPPADDING', (0,0), (-1,-1), 4),
     ]))
 
     elements.append(info_table)
     elements.append(Spacer(1, 0.6*cm))
+
+#Grades table section
+    elements.append(Paragraph('Grades', subheading))
+
+    if grades:
+        grade_data = [['Subject', 'Assessment', 'Score', 'Percentage', 'Grade', 'Date', 'Feedback']]
+
+        for g in grades:
+            grade_data.append([
+                g['subject_name'],
+                g['assessment_name'],
+                g['score'],
+                f"{g['percentage']}%",
+                g['letter_grade'],
+                g['date'].strftime('%d/%m/%Y'),
+                g['feedback']
+            ])
+
+        grade_table = Table(grade_data, colWidths=[3*cm, 4*cm, 2*cm, 2*cm, 2*cm, 3*cm, 4*cm])
+
+        grade_table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.lightblue),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,0), 10),
+            ('BOTTOMPADDING', (0,0), (-1,0), 6),
+            ('GRID', (0,0), (-1,-1), 1, colors.black),
+        ]))
+
+        elements.append(grade_table)
+    else:
+        elements.append(Paragraph('No grades recorded yet.', normal))
+
+    elements.append(Spacer(1, 0.6*cm))
+
+# teacher comments section
+    elements.append(Paragraph('Teacher Comments', subheading))
+
+    comments_gotten = False
+    for g in grades:
+        if g['feedback']:
+            comments_gotten = True
+            elements.append(Paragraph(f"<b>{g['subject_name']}:</b> {g['feedback']}", normal))
+            elements.append(Spacer(1, 0.2*cm))
+
+# this part build the pdf and displays it 
+            doc.build(elements)
+
+            pdf_bytes = buffer.getvalue()
+            buffer.close()
+
+            return pdf_bytes

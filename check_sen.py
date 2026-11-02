@@ -5,7 +5,10 @@ from app.models import Student
 app = create_app()
 
 with app.app_context():
-    s = Student.query.first()
+    student_id = 1
+
+
+    s = Student.query.get(student_id)
     if s:
         s.is_sen = True
         db.session.commit()
