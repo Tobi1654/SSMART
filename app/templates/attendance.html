@@ -60,7 +60,9 @@
 
                     <tr>
                         <td>{{loop.index}}</td>
-                        <td>{{ s.full_name}}</td>
+                        <td>
+                            <a href="{{url_for('teacher.student_profile', student_id=s.student_id)}}">{{ s.full_name}}</a>
+                        </td>
 
                         <td class="button-togggle">
                             <input type="hidden"
