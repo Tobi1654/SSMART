@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, flash, render_template, redirect
 from app.extensions import db
-from app.models import Teacher, Class, Student, Attendance, Subject, Grade, Homework, Behaviour, TeacherNote, User
+from app.models import Teacher, Class, Student, Attendance, Subject, Grade, Homework, Behaviour, TeacherNote, User, Notification
 from app.utils import teacher_required
 from flask_login import current_user
 from datetime import date
@@ -264,6 +264,16 @@ def create_homework():
             status = 'pending'
         )
         db.session.add(homework)
+        db.session.commit()
+
+        notification = Notification(
+            user_id = student_user.user_id,
+            title = 'New Homework Craeted',
+            message = f'{student.full_name} your teacher has set the homework: {homework.title} from {subjects.subject_name} which is due by {homework.deadline}',
+            type = 'alert',
+            read_status = False
+        )
+        db.session.add(notification)
         db.session.commit()
 
         flash(f'Homework: {title} created successfully', category='success')
